@@ -1,0 +1,51 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background-color: #2f3542;
+  color: white;
+  width: 220px;
+  transition: width 0.2s ease;
+  padding: 1rem 0;
+
+  &.collapsed {
+    width: 60px;
+
+    .icon {
+      margin: 0 auto;
+    }
+
+    span {
+      display: none;
+    }
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .icon {
+        margin-right: 1rem;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.main-content {
+  flex-grow: 1;
+  background: #f1f2f6;
+  padding: 2rem;
+}
+
+.sidebar li.active {
+  background-color: #57606f;
+}
