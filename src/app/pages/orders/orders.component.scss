@@ -1,0 +1,66 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    background: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background-color: #f4f4f4;
+  }
+
+  button {
+    padding: 0.3rem 0.8rem;
+    background-color: #57606f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.status {
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+
+  &.creată {
+    background-color: #1e90ff;
+  }
+
+  &.planificată {
+    background-color: #ffa502;
+  }
+
+  &.în-curs {
+    background-color: #ff6b81;
+  }
+
+  &.finalizată {
+    background-color: #2ed573;
+  }
+}

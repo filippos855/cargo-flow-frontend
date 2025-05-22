@@ -11,4 +11,9 @@ import { CommonModule } from '@angular/common';
 })
 export class LayoutComponent {
   collapsed = true;
+  resourcesExpanded = false;
+
+  toggleResources(): void {
+    this.resourcesExpanded = !this.resourcesExpanded;
+  }
 }
