@@ -1,0 +1,55 @@
+<div class="layout">
+  <aside class="sidebar" [class.collapsed]="collapsed"
+         (mouseenter)="collapsed = false"
+         (mouseleave)="collapsed = true">
+    <nav>
+      <ul>
+        <li routerLink="/dashboard" routerLinkActive="active">
+          <i class="icon">🏠</i> <span *ngIf="!collapsed">Dashboard</span>
+        </li>
+        <li routerLink="/orders" routerLinkActive="active">
+          <i class="icon">📦</i> <span *ngIf="!collapsed">Comenzi</span>
+        </li>
+        <li routerLink="/trips" routerLinkActive="active">
+          <i class="icon">🚚</i> <span *ngIf="!collapsed">Curse</span>
+        </li>
+        <li routerLink="/fleet" routerLinkActive="active">
+          <i class="icon">🚛</i> <span *ngIf="!collapsed">Flotă</span>
+        </li>
+        <li routerLink="/invoices" routerLinkActive="active">
+          <i class="icon">📑</i> <span *ngIf="!collapsed">Facturi</span>
+        </li>
+        <li routerLink="/reports" routerLinkActive="active">
+          <i class="icon">📊</i> <span *ngIf="!collapsed">Rapoarte</span>
+        </li>
+
+        <!-- Submeniu Resurse -->
+        <li class="has-children" (click)="toggleResources()">
+          <i class="icon">🧾</i>
+          <span *ngIf="!collapsed">Resurse</span>
+          <span *ngIf="!collapsed" class="arrow" [class.expanded]="resourcesExpanded">▶</span>
+        </li>
+
+        <ul *ngIf="resourcesExpanded && !collapsed" class="submenu">
+          <li routerLink="/resources/companies" routerLinkActive="active">
+            <i class="icon">🏢</i> <span>Firme</span>
+          </li>
+          <li routerLink="/resources/persons" routerLinkActive="active">
+            <i class="icon">👥</i> <span>Persoane</span>
+          </li>
+        </ul>
+
+        <li routerLink="/users" routerLinkActive="active">
+          <i class="icon">👤</i> <span *ngIf="!collapsed">Utilizatori</span>
+        </li>
+        <li routerLink="/api-clients" routerLinkActive="active">
+          <i class="icon">🔑</i> <span *ngIf="!collapsed">API Clients & Tokens</span>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

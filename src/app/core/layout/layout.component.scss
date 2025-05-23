@@ -1,0 +1,98 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background-color: #2f3542;
+  color: white;
+  width: 220px;
+  transition: width 0.2s ease;
+  padding: 1rem 0;
+
+  &.collapsed {
+    width: 60px;
+
+    .icon {
+      margin: 0 auto;
+    }
+
+    span,
+    .arrow {
+      display: none;
+    }
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      cursor: pointer;
+
+      .icon {
+        font-size: 18px;
+      }
+
+      &.active {
+        background-color: #1e90ff;
+      }
+    }
+  }
+}
+
+.main-content {
+  flex-grow: 1;
+  background: #f1f2f6;
+  padding: 2rem;
+}
+
+/* Submeniu Resurse */
+.has-children {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 1rem;
+
+  .arrow {
+    transition: transform 0.2s ease;
+    font-size: 14px;
+    margin-left: auto;
+  }
+
+  .arrow.expanded {
+    transform: rotate(90deg);
+  }
+}
+
+.submenu {
+  list-style: none;
+  padding-left: 2rem;
+  background-color: #3a3f47;
+
+  li {
+    padding: 0.5rem 1.5rem;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .icon {
+      font-size: 16px;
+    }
+
+    &:hover {
+      background-color: #4b5058;
+    }
+
+    &.active {
+      background-color: #1e90ff;
+    }
+  }
+}
