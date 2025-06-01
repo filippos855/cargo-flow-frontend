@@ -1,0 +1,35 @@
+h2 {
+  margin-bottom: 1.5rem;
+  color: #2f3542;
+}
+
+p {
+  margin: 0.5rem 0;
+  font-size: 15px;
+  color: #333;
+
+  strong {
+    color: #1e90ff;
+    margin-right: 0.25rem;
+  }
+}
+
+.trip-number {
+  font-weight: bold;
+  color: #3742fa;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  background-color: #1e90ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0d6efd;
+  }
+}

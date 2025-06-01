@@ -1,0 +1,24 @@
+<h2>Detalii comandă</h2>
+
+<div *ngIf="order">
+  <p><strong>Număr comandă:</strong> {{ order.number }}</p>
+  <p><strong>Firmă client:</strong> {{ order.company.name }}</p>
+  <p><strong>Persoană de contact:</strong> {{ order.company.contactPerson.fullName }}</p>
+  <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
+  <p><strong>Status:</strong> {{ order.status.name }}</p>
+  <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+  <ng-container *ngIf="order.trip; else notIncluded">
+    <p class="trip-number"><strong>Cursă asociată:</strong> {{ order.trip.number }}</p>
+  </ng-container>
+
+  <ng-template #notIncluded>
+    <p><strong>Cursă asociată:</strong> —</p>
+    <div *ngIf="order.status.name === 'Inițiat'">
+      <button (click)="includeInTrip()">Include în cursă</button>
+    </div>
+  </ng-template>
+
+  <br />
+  <button (click)="goBack()">Înapoi</button>
+</div>

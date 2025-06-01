@@ -1,0 +1,26 @@
+<div class="toolbar">
+  <button (click)="addOrder()">+ Adaugă comandă</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Număr</th>
+      <th>Client</th>
+      <th>Persoană livrare</th>
+      <th>Status</th>
+      <th>Data comandă</th>
+      <th>Cursă</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let order of orders">
+      <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
+      <td>{{ order.company.name }}</td>
+      <td>{{ order.deliveryPerson.fullName }}</td>
+      <td>{{ order.status.name }}</td>
+      <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ order.trip?.number || '—' }}</td>
+    </tr>
+  </tbody>
+</table>

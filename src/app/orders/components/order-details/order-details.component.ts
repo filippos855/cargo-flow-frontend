@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Order } from '../../../models/order.model';
-import { OrderService } from '../../../services/order.service';
+
+import { Order } from '../../models/order.model';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-order-details',
@@ -16,7 +17,11 @@ export class OrderDetailsComponent {
   order!: Order;
   isEditing = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private orderService: OrderService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private orderService: OrderService
+  ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     const found = this.orderService.getOrderById(id);
     if (found) {
@@ -32,6 +37,11 @@ export class OrderDetailsComponent {
     this.orderService.updateOrder(this.order);
     this.isEditing = false;
     alert('Comanda a fost salvată.');
+  }
+
+  includeInTrip(): void {
+    this.orderService.includeInMockTrip(this.order);
+    alert('Comanda a fost inclusă într-o cursă.');
   }
 
   goBack(): void {
