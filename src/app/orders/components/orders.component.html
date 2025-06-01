@@ -1,3 +1,5 @@
+<h2>Comenzi</h2>
+
 <div class="toolbar">
   <button (click)="addOrder()">+ Adaugă comandă</button>
 </div>
@@ -20,7 +22,10 @@
       <td>{{ order.deliveryPerson.fullName }}</td>
       <td>{{ order.status.name }}</td>
       <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-      <td>{{ order.trip?.number || '—' }}</td>
+      <td>
+        <a *ngIf="order.trip" [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+        <span *ngIf="!order.trip">—</span>
+      </td>
     </tr>
   </tbody>
 </table>

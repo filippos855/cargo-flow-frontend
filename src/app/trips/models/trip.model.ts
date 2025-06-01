@@ -1,8 +1,8 @@
-import { Company } from './company.model';
-import { DictionaryItem } from './dictionary-item.model';
-import { FleetVehicle } from './fleet-vehicle.model';
+import { Company } from '../../shared/models/company.model';
+import { DictionaryItem } from '../../shared/models/dictionary-item.model';
+import { FleetVehicle } from '../../shared/models/fleet-vehicle.model';
 import { Order } from '../../orders/models/order.model';
-import { Person } from './person.model';
+import { Person } from '../../shared/models/person.model';
 
 export interface Trip {
   id: number;

@@ -1,7 +1,7 @@
 import { Company } from '../../shared/models/company.model';
 import { Person } from '../../shared/models/person.model';
 import { DictionaryItem } from '../../shared/models/dictionary-item.model';
-import { Trip } from '../../shared/models/trip.model';
+import { Trip } from '../../trips/models/trip.model';
 
 export interface Order {
   id: number;

@@ -1,0 +1,44 @@
+<h2>Detalii cursă</h2>
+
+<div *ngIf="trip$ | async as trip; else loading">
+  <p><strong>Număr:</strong> {{ trip.number }}</p>
+  <p><strong>Dată început:</strong> {{ trip.startDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+  <p><strong>Dată sfârșit:</strong> {{ trip.endDate ? (trip.endDate | date: 'dd/MM/yyyy HH:mm') : '—' }}</p>
+  <p><strong>Status:</strong> {{ trip.status.name }}</p>
+  <p><strong>Firmă transport:</strong> {{ trip.transportCompany.name }}</p>
+  <p><strong>Șofer:</strong> {{ trip.driver?.fullName || '—' }}</p>
+  <p><strong>Tractor:</strong> {{ trip.tractorUnit?.identifier || '—' }}</p>
+  <p><strong>Remorcă:</strong> {{ trip.trailer?.identifier || '—' }}</p>
+
+  <h3>Comenzi incluse</h3>
+  <div *ngIf="trip.orders?.length; else noOrders">
+    <table>
+      <thead>
+        <tr>
+          <th>Număr comandă</th>
+          <th>Client</th>
+          <th>Data adăugare</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of trip.orders">
+          <td>
+            <a [routerLink]="['/orders', order.id]">{{ order.number }}</a>
+          </td>
+          <td>{{ order.company.name }}</td>
+          <td>{{ order.createdDate | date: 'shortDate' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #noOrders>
+    <p>Nu există comenzi incluse în această cursă.</p>
+  </ng-template>
+
+  <br />
+  <button (click)="goBack()">← Înapoi</button>
+</div>
+
+<ng-template #loading>
+  <p>Se încarcă detaliile cursei...</p>
+</ng-template>

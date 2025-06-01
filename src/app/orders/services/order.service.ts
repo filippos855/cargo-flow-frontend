@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Order } from '../models/order.model';
 import { Company } from '../../shared/models/company.model';
 import { Person } from '../../shared/models/person.model';
-import { Trip } from '../../shared/models/trip.model';
+import { Trip } from '../../trips/models/trip.model';
 import { FleetVehicle } from '../../shared/models/fleet-vehicle.model';
 import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 

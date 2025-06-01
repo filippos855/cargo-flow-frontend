@@ -1,0 +1,30 @@
+<h2>Curse</h2>
+
+<div class="toolbar">
+  <button (click)="addMockTrip()">+ Adaugă cursă (mock)</button>
+</div>
+
+<div *ngIf="(trips$ | async) as trips; else loading">
+  <table>
+    <thead>
+      <tr>
+        <th>Număr</th>
+        <th>Dată început</th>
+        <th>Șofer</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let trip of trips">
+        <td><a [routerLink]="['/trips', trip.id]">{{ trip.number }}</a></td>
+        <td>{{ trip.startDate | date: 'shortDate' }}</td>
+        <td>{{ trip.driver?.fullName || '—' }}</td>
+        <td>{{ trip.status.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #loading>
+  <p>Se încarcă...</p>
+</ng-template>

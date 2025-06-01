@@ -9,8 +9,12 @@
   <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
 
   <ng-container *ngIf="order.trip; else notIncluded">
-    <p class="trip-number"><strong>Cursă asociată:</strong> {{ order.trip.number }}</p>
+    <p class="trip-number">
+      <strong>Cursă asociată:</strong>
+      <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+    </p>
   </ng-container>
+
 
   <ng-template #notIncluded>
     <p><strong>Cursă asociată:</strong> —</p>
