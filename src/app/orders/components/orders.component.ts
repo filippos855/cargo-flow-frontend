@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
-import { Order } from '../../models/order.model';
-import { OrderService } from '../../services/order.service';
+import { Order } from '../models/order.model';
+import { OrderService } from '../services/order.service';
 
 @Component({
   selector: 'app-orders',
@@ -29,6 +29,6 @@ export class OrdersComponent implements OnInit {
   }
 
   addOrder(): void {
-  alert('Funcționalitatea de adăugare comandă va fi implementată.');
+    alert('Funcționalitatea de adăugare comandă va fi implementată.');
   }
 }

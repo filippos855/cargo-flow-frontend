@@ -1,10 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LayoutComponent } from './layout.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Component } from '@angular/core';
-
-@Component({ selector: 'router-outlet', template: '' })
-class RouterOutletStubComponent {}
+import { provideRouter } from '@angular/router';
 
 describe('LayoutComponent', () => {
   let component: LayoutComponent;
@@ -12,8 +8,8 @@ describe('LayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      declarations: [LayoutComponent, RouterOutletStubComponent]
+      imports: [LayoutComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LayoutComponent);

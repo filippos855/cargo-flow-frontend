@@ -1,9 +1,9 @@
-import { VehicleType } from './vehicle-type.model';
+import { DictionaryItem } from './dictionary-item.model';
 
 export interface FleetVehicle {
   id: number;
   identifier: string;
-  type: VehicleType;      // Dicționar extern
+  type: DictionaryItem; // ex: { id: 3, name: 'Tractor', dictionaryId: 3 }
   itpExpiration: Date;
   rcaExpiration: Date;
   isAvailable: boolean;

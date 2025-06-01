@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { Order } from '../../../models/order.model';
-import { Trip } from '../../../models/trip.model';
-import { OrderService } from '../../../services/order.service';
+import { Order } from '../../models/order.model';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-order-details',
@@ -41,42 +40,7 @@ export class OrderDetailsComponent {
   }
 
   includeInTrip(): void {
-    const mockTrip: Trip = {
-      id: 1,
-      number: 'TRIP2024001',
-      startDate: new Date(),
-      status: { id: 1, name: 'Planificată' },
-      transportCompany: {
-        id: 1,
-        name: 'Transport SRL',
-        code: 'TRANS',
-        contactPerson: { id: 2, fullName: 'Vasile Ion' }
-      },
-      driver: {
-        id: 3,
-        fullName: 'Popa Mihai'
-      },
-      tractorUnit: {
-        id: 10,
-        identifier: 'B123ABC',
-        type: { id: 1, name: 'Tractor' },
-        itpExpiration: new Date(),
-        rcaExpiration: new Date(),
-        isAvailable: true
-      },
-      trailer: {
-        id: 11,
-        identifier: 'CJ07XYZ',
-        type: { id: 2, name: 'Trailer' },
-        itpExpiration: new Date(),
-        rcaExpiration: new Date(),
-        isAvailable: true
-      },
-      orders: [this.order]
-    };
-
-    this.order.trip = mockTrip;
-    this.orderService.updateOrder(this.order);
+    this.orderService.includeInMockTrip(this.order);
     alert('Comanda a fost inclusă într-o cursă.');
   }
 

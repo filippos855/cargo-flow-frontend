@@ -6,7 +6,7 @@
   <p><strong>Persoană de contact:</strong> {{ order.company.contactPerson.fullName }}</p>
   <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
   <p><strong>Status:</strong> {{ order.status.name }}</p>
-  <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'short' }}</p>
+  <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
 
   <ng-container *ngIf="order.trip; else notIncluded">
     <p class="trip-number"><strong>Cursă asociată:</strong> {{ order.trip.number }}</p>
