@@ -5,29 +5,35 @@
     <nav>
       <ul>
         <li routerLink="/dashboard" routerLinkActive="active">
-          <i class="icon">🏠</i> <span *ngIf="!collapsed">Dashboard</span>
+          <i class="icon">🏠</i>
+          <span *ngIf="!collapsed">Dashboard</span>
         </li>
         <li routerLink="/orders" routerLinkActive="active">
-          <i class="icon">📦</i> <span *ngIf="!collapsed">Comenzi</span>
+          <i class="icon">📦</i>
+          <span *ngIf="!collapsed">Comenzi</span>
         </li>
         <li routerLink="/trips" routerLinkActive="active">
-          <i class="icon">🚚</i> <span *ngIf="!collapsed">Curse</span>
+          <i class="icon">🚚</i>
+          <span *ngIf="!collapsed">Curse</span>
         </li>
         <li routerLink="/fleet" routerLinkActive="active">
-          <i class="icon">🚛</i> <span *ngIf="!collapsed">Flotă</span>
+          <i class="icon">🚛</i>
+          <span *ngIf="!collapsed">Flotă</span>
         </li>
         <li routerLink="/invoices" routerLinkActive="active">
-          <i class="icon">📑</i> <span *ngIf="!collapsed">Facturi</span>
+          <i class="icon">📑</i>
+          <span *ngIf="!collapsed">Facturi</span>
         </li>
         <li routerLink="/reports" routerLinkActive="active">
-          <i class="icon">📊</i> <span *ngIf="!collapsed">Rapoarte</span>
+          <i class="icon">📊</i>
+          <span *ngIf="!collapsed">Rapoarte</span>
         </li>
 
         <!-- Submeniu Resurse -->
         <li class="has-children" (click)="toggleResources()">
           <i class="icon">🧾</i>
           <span *ngIf="!collapsed">Resurse</span>
-          <span *ngIf="!collapsed" class="arrow" [class.expanded]="resourcesExpanded">▶</span>
+          <span *ngIf="!collapsed" class="arrow">{{ resourcesExpanded ? '▼' : '▶' }}</span>
         </li>
 
         <ul *ngIf="resourcesExpanded && !collapsed" class="submenu">
@@ -40,10 +46,12 @@
         </ul>
 
         <li routerLink="/users" routerLinkActive="active">
-          <i class="icon">👤</i> <span *ngIf="!collapsed">Utilizatori</span>
+          <i class="icon">👤</i>
+          <span *ngIf="!collapsed">Utilizatori</span>
         </li>
         <li routerLink="/api-clients" routerLinkActive="active">
-          <i class="icon">🔑</i> <span *ngIf="!collapsed">API Clients & Tokens</span>
+          <i class="icon">🔑</i>
+          <span *ngIf="!collapsed">API Clients & Tokens</span>
         </li>
       </ul>
     </nav>

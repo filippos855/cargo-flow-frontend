@@ -21,11 +21,16 @@
     .arrow {
       display: none;
     }
+
+    .submenu {
+      display: none;
+    }
   }
 
   nav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 
     li {
       padding: 1rem;
@@ -34,9 +39,16 @@
       justify-content: flex-start;
       gap: 0.75rem;
       cursor: pointer;
+      white-space: nowrap;
 
       .icon {
         font-size: 18px;
+        width: 24px;
+        text-align: center;
+      }
+
+      &:hover {
+        background-color: #404756;
       }
 
       &.active {
@@ -57,34 +69,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  cursor: pointer;
   padding: 1rem;
+  cursor: pointer;
 
   .arrow {
     transition: transform 0.2s ease;
     font-size: 14px;
     margin-left: auto;
   }
-
-  .arrow.expanded {
-    transform: rotate(90deg);
-  }
 }
 
 .submenu {
   list-style: none;
-  padding-left: 2rem;
+  padding-left: 1.5rem;
   background-color: #3a3f47;
 
   li {
-    padding: 0.5rem 1.5rem;
-    margin-left: 1rem;
+    padding: 0.6rem 1rem;
+    margin-left: 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: 14px;
 
     .icon {
       font-size: 16px;
+      width: 20px;
+      text-align: center;
     }
 
     &:hover {

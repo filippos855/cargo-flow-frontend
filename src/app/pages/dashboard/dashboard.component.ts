@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,17 +10,19 @@ import { OrderService } from '../../services/order.service';
 })
 export class DashboardComponent implements OnInit {
   totalOrders = 0;
-  createdOrders = 0;
-  inTripOrders = 0;
-  finishedOrders = 0;
-
-  constructor(private orderService: OrderService) {}
+  pendingOrders = 0;
+  activeTrips = 0;
+  expiringFleet = 0;
+  unpaidInvoices = 0;
+  activeClients = 0;
 
   ngOnInit(): void {
-    const orders = this.orderService.getOrders();
-    this.totalOrders = orders.length;
-    this.createdOrders = orders.filter(o => o.status === 'Creată').length;
-    this.inTripOrders = orders.filter(o => o.includedInTrip).length;
-    this.finishedOrders = orders.filter(o => o.status === 'Finalizată').length;
+    // TODO: Înlocuiește cu apeluri reale la servicii când sunt disponibile
+    this.totalOrders = 128;
+    this.pendingOrders = 14;
+    this.activeTrips = 6;
+    this.expiringFleet = 2;
+    this.unpaidInvoices = 17;
+    this.activeClients = 12;
   }
 }

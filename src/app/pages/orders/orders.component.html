@@ -1,33 +1,26 @@
-<div class="header">
-  <h1>Comenzi</h1>
-  <button (click)="addOrder()">Adaugă comandă</button>
+<div class="toolbar">
+  <button (click)="addOrder()">+ Adaugă comandă</button>
 </div>
 
 <table>
   <thead>
     <tr>
       <th>Număr</th>
-      <th>Firmă</th>
+      <th>Client</th>
       <th>Persoană livrare</th>
       <th>Status</th>
-      <th>Dată adăugare</th>
-      <th>Acțiuni</th>
+      <th>Data comandă</th>
+      <th>Cursă</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let order of orders">
-      <td>{{ order.number }}</td>
+      <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
       <td>{{ order.company.name }}</td>
-      <td>{{ order.person.name }}</td>
-      <td>
-        <span class="status" [ngClass]="order.status.toLowerCase().replace(' ', '-')">
-          {{ order.status }}
-        </span>
-      </td>
-      <td>{{ order.createdAt | date: 'yyyy-MM-dd HH:mm' }}</td>
-      <td>
-        <button (click)="viewOrder(order)">Vezi detalii</button>
-      </td>
+      <td>{{ order.deliveryPerson.fullName }}</td>
+      <td>{{ order.status.name }}</td>
+      <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ order.trip?.number || '—' }}</td>
     </tr>
   </tbody>
 </table>

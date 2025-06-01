@@ -1,35 +1,24 @@
-<h1>Detalii comandă: {{ order.number }}</h1>
+<h2>Detalii comandă</h2>
 
-<div *ngIf="!isEditing">
-  <ul class="order-details">
-    <li><strong>Firmă:</strong> {{ order.company.name }}</li>
-    <li><strong>Persoană livrare:</strong> {{ order.person.name }} ({{ order.person.email }})</li>
-    <li><strong>Adresă:</strong> {{ order.address }}</li>
-    <li><strong>Dată adăugare:</strong> {{ order.createdAt | date: 'yyyy-MM-dd HH:mm' }}</li>
-    <li><strong>Status:</strong> {{ order.status }}</li>
-    <li><strong>Observații:</strong> {{ order.notes || '–' }}</li>
-  </ul>
+<div *ngIf="order">
+  <p><strong>Număr comandă:</strong> {{ order.number }}</p>
+  <p><strong>Firmă client:</strong> {{ order.company.name }}</p>
+  <p><strong>Persoană de contact:</strong> {{ order.company.contactPerson.fullName }}</p>
+  <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
+  <p><strong>Status:</strong> {{ order.status.name }}</p>
+  <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'short' }}</p>
 
-  <button *ngIf="order.status === 'Creată'" (click)="enableEdit()">Editează comanda</button>
-  <button (click)="goBack()">Înapoi la listă</button>
-</div>
+  <ng-container *ngIf="order.trip; else notIncluded">
+    <p class="trip-number"><strong>Cursă asociată:</strong> {{ order.trip.number }}</p>
+  </ng-container>
 
-<div *ngIf="isEditing">
-  <form (ngSubmit)="save()">
-    <label>
-      Persoană:
-      <input [(ngModel)]="order.person.name" name="person" required />
-    </label>
-    <label>
-      Adresă:
-      <input [(ngModel)]="order.address" name="address" required />
-    </label>
-    <label>
-      Observații:
-      <textarea [(ngModel)]="order.notes" name="notes"></textarea>
-    </label>
+  <ng-template #notIncluded>
+    <p><strong>Cursă asociată:</strong> —</p>
+    <div *ngIf="order.status.name === 'Inițiat'">
+      <button (click)="includeInTrip()">Include în cursă</button>
+    </div>
+  </ng-template>
 
-    <button type="submit">Salvează modificările</button>
-    <button type="button" (click)="goBack()">Renunță</button>
-  </form>
+  <br />
+  <button (click)="goBack()">Înapoi</button>
 </div>

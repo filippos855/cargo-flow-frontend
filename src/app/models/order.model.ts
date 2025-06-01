@@ -1,23 +1,14 @@
-export type OrderStatus = 'Creată' | 'Planificată' | 'În curs' | 'Finalizată';
+import { Company } from './company.model';
+import { Person } from './person.model';
+import { OrderStatus } from './order-status.model';
+import { Trip } from './trip.model';
 
 export interface Order {
   id: number;
   number: string;
+  createdDate: Date;
+  company: Company; // firma care a plasat comanda
+  deliveryPerson: Person; // persoana către care se livrează
   status: OrderStatus;
-  company: {
-    id: number;
-    name: string;
-    code: string;
-  };
-  person: {
-    id: number;
-    name: string;
-    phone: string;
-    email: string;
-  };
-  address: string;
-  createdAt: Date;
-  includedInTrip: boolean;
-  tripId?: number | null;
-  notes?: string;
+  trip?: Trip;
 }
