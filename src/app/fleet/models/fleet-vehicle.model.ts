@@ -1,4 +1,4 @@
-import { DictionaryItem } from './dictionary-item.model';
+import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 
 export interface FleetVehicle {
   id: number;

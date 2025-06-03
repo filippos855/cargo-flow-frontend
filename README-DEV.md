@@ -4,6 +4,15 @@ Acest fișier documentează structura, convențiile și progresul aplicației ta
 
 ---
 
+## 📅 Stack tehnologic actual
+
+* **Angular**: 20.0.0
+* **TypeScript**: 5.8.3
+* **Node.js**: v20.19.2
+* **npm**: 11.4.1
+
+---
+
 ## 📁 Structura actuală `src/app`
 
 ```plaintext
@@ -122,7 +131,8 @@ src/app/
 
 * Proiectul face parte din lucrarea de licență în cadrul **Licenta\_Fillipos**
 * Branch activ de lucru: `develop`
-* Angular 17 + standalone components + routing lazy (cu `loadComponent`)
+* Angular 20 + standalone components + routing lazy (`loadComponent`)
+* TypeScript 5.8.3 + Node.js 20.19.2 + npm 11.4.1
 * Testele folosesc `provideRouter([])`
 * Layoutul include meniu lateral cu icoane animate și collapse
 * Se urmărește consistența vizuală și UX fluid între module

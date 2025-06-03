@@ -1,6 +1,6 @@
 import { Company } from '../../shared/models/company.model';
 import { DictionaryItem } from '../../shared/models/dictionary-item.model';
-import { FleetVehicle } from '../../shared/models/fleet-vehicle.model';
+import { FleetVehicle } from '../../fleet/models/fleet-vehicle.model';
 import { Order } from '../../orders/models/order.model';
 import { Person } from '../../shared/models/person.model';
 
