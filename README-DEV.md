@@ -126,6 +126,3 @@ src/app/
 * Testele folosesc `provideRouter([])`
 * Layoutul include meniu lateral cu icoane animate și collapse
 * Se urmărește consistența vizuală și UX fluid între module
-
-```
-```
