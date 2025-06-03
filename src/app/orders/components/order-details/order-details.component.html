@@ -1,28 +1,27 @@
 <h2>Detalii comandă</h2>
 
-<div *ngIf="order">
-  <p><strong>Număr comandă:</strong> {{ order.number }}</p>
-  <p><strong>Firmă client:</strong> {{ order.company.name }}</p>
-  <p><strong>Persoană de contact:</strong> {{ order.company.contactPerson.fullName }}</p>
-  <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
-  <p><strong>Status:</strong> {{ order.status.name }}</p>
-  <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
-
-  <ng-container *ngIf="order.trip; else notIncluded">
-    <p class="trip-number">
-      <strong>Cursă asociată:</strong>
-      <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
-    </p>
-  </ng-container>
-
-
-  <ng-template #notIncluded>
-    <p><strong>Cursă asociată:</strong> —</p>
-    <div *ngIf="order.status.name === 'Inițiat'">
-      <button (click)="includeInTrip()">Include în cursă</button>
-    </div>
-  </ng-template>
-
-  <br />
-  <button (click)="goBack()">Înapoi</button>
-</div>
+@if (order) {
+  <div>
+    <p><strong>Număr comandă:</strong> {{ order.number }}</p>
+    <p><strong>Firmă client:</strong> {{ order.company.name }}</p>
+    <p><strong>Persoană de contact:</strong> {{ order.company.contactPerson.fullName }}</p>
+    <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
+    <p><strong>Status:</strong> {{ order.status.name }}</p>
+    <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+    @if (order.trip) {
+      <p class="trip-number">
+        <strong>Cursă asociată:</strong>
+        <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+      </p>
+    } @else {
+      <p><strong>Cursă asociată:</strong> —</p>
+      @if (order.status.name === 'Inițiat') {
+        <div>
+          <button (click)="includeInTrip()">Include în cursă</button>
+        </div>
+      }
+    }
+    <br />
+    <button (click)="goBack()">Înapoi</button>
+  </div>
+}

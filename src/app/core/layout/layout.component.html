@@ -1,57 +1,79 @@
 <div class="layout">
   <aside class="sidebar" [class.collapsed]="collapsed"
-         (mouseenter)="collapsed = false"
-         (mouseleave)="collapsed = true">
+    (mouseenter)="collapsed = false"
+    (mouseleave)="collapsed = true">
     <nav>
       <ul>
         <li routerLink="/dashboard" routerLinkActive="active">
           <i class="icon">🏠</i>
-          <span *ngIf="!collapsed">Dashboard</span>
+          @if (!collapsed) {
+            <span>Dashboard</span>
+          }
         </li>
         <li routerLink="/orders" routerLinkActive="active">
           <i class="icon">📦</i>
-          <span *ngIf="!collapsed">Comenzi</span>
+          @if (!collapsed) {
+            <span>Comenzi</span>
+          }
         </li>
         <li routerLink="/trips" routerLinkActive="active">
           <i class="icon">🚚</i>
-          <span *ngIf="!collapsed">Curse</span>
+          @if (!collapsed) {
+            <span>Curse</span>
+          }
         </li>
         <li routerLink="/fleet" routerLinkActive="active">
           <i class="icon">🚛</i>
-          <span *ngIf="!collapsed">Flotă</span>
+          @if (!collapsed) {
+            <span>Flotă</span>
+          }
         </li>
         <li routerLink="/invoices" routerLinkActive="active">
           <i class="icon">📑</i>
-          <span *ngIf="!collapsed">Facturi</span>
+          @if (!collapsed) {
+            <span>Facturi</span>
+          }
         </li>
         <li routerLink="/reports" routerLinkActive="active">
           <i class="icon">📊</i>
-          <span *ngIf="!collapsed">Rapoarte</span>
+          @if (!collapsed) {
+            <span>Rapoarte</span>
+          }
         </li>
 
         <!-- Submeniu Resurse -->
         <li class="has-children" (click)="toggleResources()">
           <i class="icon">🧾</i>
-          <span *ngIf="!collapsed">Resurse</span>
-          <span *ngIf="!collapsed" class="arrow">{{ resourcesExpanded ? '▼' : '▶' }}</span>
+          @if (!collapsed) {
+            <span>Resurse</span>
+          }
+          @if (!collapsed) {
+            <span class="arrow">{{ resourcesExpanded ? '▼' : '▶' }}</span>
+          }
         </li>
 
-        <ul *ngIf="resourcesExpanded && !collapsed" class="submenu">
-          <li routerLink="/resources/companies" routerLinkActive="active">
-            <i class="icon">🏢</i> <span>Firme</span>
-          </li>
-          <li routerLink="/resources/persons" routerLinkActive="active">
-            <i class="icon">👥</i> <span>Persoane</span>
-          </li>
-        </ul>
+        @if (resourcesExpanded && !collapsed) {
+          <ul class="submenu">
+            <li routerLink="/resources/companies" routerLinkActive="active">
+              <i class="icon">🏢</i> <span>Firme</span>
+            </li>
+            <li routerLink="/resources/persons" routerLinkActive="active">
+              <i class="icon">👥</i> <span>Persoane</span>
+            </li>
+          </ul>
+        }
 
         <li routerLink="/users" routerLinkActive="active">
           <i class="icon">👤</i>
-          <span *ngIf="!collapsed">Utilizatori</span>
+          @if (!collapsed) {
+            <span>Utilizatori</span>
+          }
         </li>
         <li routerLink="/api-clients" routerLinkActive="active">
           <i class="icon">🔑</i>
-          <span *ngIf="!collapsed">API Clients & Tokens</span>
+          @if (!collapsed) {
+            <span>API Clients & Tokens</span>
+          }
         </li>
       </ul>
     </nav>
