@@ -6,11 +6,10 @@ import { TripService } from '../services/trip.service';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-trips',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './trips.component.html',
-  styleUrls: ['./trips.component.scss']
+    selector: 'app-trips',
+    imports: [CommonModule, RouterModule],
+    templateUrl: './trips.component.html',
+    styleUrls: ['./trips.component.scss']
 })
 export class TripsComponent implements OnInit {
   trips$: Observable<Trip[]> = this.tripService.getTrips();

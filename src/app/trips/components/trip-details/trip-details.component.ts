@@ -6,11 +6,10 @@ import { Trip } from '../../models/trip.model';
 import { Observable, switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-trip-details',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './trip-details.component.html',
-  styleUrls: ['./trip-details.component.scss']
+    selector: 'app-trip-details',
+    imports: [CommonModule, RouterModule],
+    templateUrl: './trip-details.component.html',
+    styleUrls: ['./trip-details.component.scss']
 })
 export class TripDetailsComponent implements OnInit {
   trip$!: Observable<Trip | null>;

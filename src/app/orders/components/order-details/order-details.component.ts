@@ -7,11 +7,10 @@ import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
 @Component({
-  selector: 'app-order-details',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './order-details.component.html',
-  styleUrls: ['./order-details.component.scss']
+    selector: 'app-order-details',
+    imports: [CommonModule, FormsModule, RouterModule],
+    templateUrl: './order-details.component.html',
+    styleUrls: ['./order-details.component.scss']
 })
 export class OrderDetailsComponent {
   order!: Order;
