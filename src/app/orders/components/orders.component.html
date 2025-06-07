@@ -1,3 +1,5 @@
+<h2>Comenzi</h2>
+
 <div class="toolbar">
   <button (click)="addOrder()">+ Adaugă comandă</button>
 </div>
@@ -14,13 +16,22 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let order of orders">
-      <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
-      <td>{{ order.company.name }}</td>
-      <td>{{ order.deliveryPerson.fullName }}</td>
-      <td>{{ order.status.name }}</td>
-      <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-      <td>{{ order.trip?.number || '—' }}</td>
-    </tr>
+    @for (order of orders; track order) {
+      <tr>
+        <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
+        <td>{{ order.company.name }}</td>
+        <td>{{ order.deliveryPerson.fullName }}</td>
+        <td>{{ order.status.name }}</td>
+        <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          @if (order.trip) {
+            <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+          }
+          @if (!order.trip) {
+            <span>—</span>
+          }
+        </td>
+      </tr>
+    }
   </tbody>
 </table>

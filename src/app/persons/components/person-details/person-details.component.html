@@ -1,0 +1,32 @@
+<h2>Detalii persoană</h2>
+
+@if (person) {
+  <div>
+    <p><strong>Nume complet:</strong> {{ person.fullName }}</p>
+    <p><strong>Telefon:</strong> {{ person.phone || '—' }}</p>
+    <p><strong>Email:</strong> {{ person.email || '—' }}</p>
+
+    @if (!isEditing) {
+      <button (click)="enableEdit()">Editează</button>
+    }
+
+    @if (isEditing) {
+      <div>
+        <label>
+          Telefon:
+          <input type="text" [(ngModel)]="person.phone" />
+        </label>
+        <br />
+        <label>
+          Email:
+          <input type="email" [(ngModel)]="person.email" />
+        </label>
+        <br />
+        <button (click)="save()">Salvează</button>
+      </div>
+    }
+
+    <br />
+    <button (click)="goBack()">Înapoi</button>
+  </div>
+}

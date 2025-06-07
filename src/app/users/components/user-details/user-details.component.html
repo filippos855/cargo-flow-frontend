@@ -1,0 +1,35 @@
+<h2>Detalii utilizator</h2>
+
+@if (user) {
+  <div>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Persoană:</strong>
+      <a [routerLink]="['/resources/persons', user.person.id]">
+        {{ user.person.fullName }}
+      </a>
+    </p>
+    <p><strong>Rol:</strong> {{ user.role.name }}</p>
+    <p><strong>Status:</strong> {{ user.isActive ? 'Activ' : 'Inactiv' }}</p>
+
+    @if (!isEditing) {
+      <button (click)="enableEdit()">Editează</button>
+    }
+
+    @if (isEditing) {
+      <div>
+        <label>
+          Status:
+          <select [(ngModel)]="user.isActive">
+            <option [ngValue]="true">Activ</option>
+            <option [ngValue]="false">Inactiv</option>
+          </select>
+        </label>
+        <br />
+        <button (click)="save()">Salvează</button>
+      </div>
+    }
+
+    <br />
+    <button (click)="goBack()">Înapoi</button>
+  </div>
+}

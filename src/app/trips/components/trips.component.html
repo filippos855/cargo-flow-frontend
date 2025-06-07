@@ -1,0 +1,33 @@
+<h2>Curse</h2>
+
+<div class="toolbar">
+  <button (click)="addMockTrip()">+ Adaugă cursă (mock)</button>
+</div>
+
+@if ((trips$ | async); as trips) {
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Număr</th>
+          <th>Dată început</th>
+          <th>Șofer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (trip of trips; track trip) {
+          <tr>
+            <td><a [routerLink]="['/trips', trip.id]">{{ trip.number }}</a></td>
+            <td>{{ trip.startDate | date: 'shortDate' }}</td>
+            <td>{{ trip.driver?.fullName || '—' }}</td>
+            <td>{{ trip.status.name }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <p>Se încarcă...</p>
+}
+

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { Order } from '../../models/order.model';
@@ -19,7 +19,7 @@ export class OrderDetailsComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     private orderService: OrderService
   ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -45,6 +45,6 @@ export class OrderDetailsComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/orders']);
+    this.location.back();
   }
 }

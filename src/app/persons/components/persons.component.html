@@ -1,0 +1,26 @@
+<h2>Persoane</h2>
+
+<div class="toolbar">
+  <button (click)="addPerson()">+ Adaugă persoană</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nume complet</th>
+      <th>Telefon</th>
+      <th>Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (person of persons; track person) {
+      <tr>
+        <td>
+          <a [routerLink]="['/resources/persons', person.id]">{{ person.fullName }}</a>
+        </td>
+        <td>{{ person.phone || '—' }}</td>
+        <td>{{ person.email || '—' }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

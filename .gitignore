@@ -1,42 +1,68 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
-# Compiled output
+# ─────────────────────────────────────────────────────────────
+# BUILD OUTPUT
+# ─────────────────────────────────────────────────────────────
 /dist
 /tmp
 /out-tsc
-/bazel-out
+/.angular/cache/
+.bazel-out/
+.vite/
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+# ─────────────────────────────────────────────────────────────
+# DEPENDENCIES
+# ─────────────────────────────────────────────────────────────
+/node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+.pnpm-debug.log*
 
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# Visual Studio Code
+# ─────────────────────────────────────────────────────────────
+# VSCODE SETTINGS
+# ─────────────────────────────────────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
+# ─────────────────────────────────────────────────────────────
+# PROJECT METADATA
+# ─────────────────────────────────────────────────────────────
+*.tsbuildinfo
+*.log
+*.lock
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# ─────────────────────────────────────────────────────────────
+# TEST COVERAGE / TEMP
+# ─────────────────────────────────────────────────────────────
+/coverage/
 testem.log
-/typings
+/karma-results/
+.nyc_output/
 
-# System files
+# ─────────────────────────────────────────────────────────────
+# SYSTEM / IDE / EDITOR FILES
+# ─────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+*.sublime-workspace
+*.code-workspace
+.idea/
+.project
+.classpath
+.settings/
+.c9/
+*.launch
+
+# ─────────────────────────────────────────────────────────────
+# BACKUP & ENV FILES (optional, if used)
+# ─────────────────────────────────────────────────────────────
+.env
+.env.*.local
+*.local

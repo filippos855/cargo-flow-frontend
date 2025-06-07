@@ -1,0 +1,30 @@
+<h2>Flotă</h2>
+
+<div class="toolbar">
+  <button (click)="addVehicle()">+ Adaugă vehicul</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Identificator</th>
+      <th>Tip</th>
+      <th>ITP</th>
+      <th>RCA</th>
+      <th>Disponibil</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (vehicle of fleet; track vehicle) {
+      <tr>
+        <td>
+          <a [routerLink]="['/fleet', vehicle.id]">{{ vehicle.identifier }}</a>
+        </td>
+        <td>{{ vehicle.type.name }}</td>
+        <td>{{ vehicle.itpExpiration | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ vehicle.rcaExpiration | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ vehicle.isAvailable ? 'Da' : 'Nu' }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -1,0 +1,57 @@
+<h2>Detalii factură</h2>
+
+@if (invoice) {
+  <div>
+    <p><strong>Număr:</strong> {{ invoice.number }}</p>
+    <p><strong>Tip:</strong> {{ invoice.invoiceType.name }}</p>
+    <p><strong>Status:</strong> {{ invoice.status.name }}</p>
+    <p><strong>Dată emitere:</strong> {{ invoice.issueDate | date: 'dd/MM/yyyy' }}</p>
+    <p><strong>Scadență:</strong> {{ invoice.dueDate | date: 'dd/MM/yyyy' }}</p>
+
+    <p><strong>Firmă:</strong>
+      <a [routerLink]="['/resources/companies', invoice.company.id]">
+        {{ invoice.company.name }}
+      </a>
+    </p>
+
+    @if (invoice.order) {
+      <p><strong>Comandă asociată:</strong>
+        <a [routerLink]="['/orders', invoice.order.id]">{{ invoice.order.number }}</a>
+      </p>
+    }
+
+    @if (invoice.trip) {
+      <p><strong>Cursă asociată:</strong>
+        <a [routerLink]="['/trips', invoice.trip.id]">{{ invoice.trip.number }}</a>
+      </p>
+    }
+
+    <p><strong>Valoare:</strong> {{ invoice.amount | number:'1.2-2' }} {{ invoice.currency }}</p>
+
+    @if (!isEditing) {
+      <button (click)="enableEdit()">Editează</button>
+    }
+
+    @if (isEditing) {
+      <div>
+        <label>
+          Status:
+          <select [(ngModel)]="invoice.status.name">
+            <option>Neachitată</option>
+            <option>Achitată</option>
+          </select>
+        </label>
+        <br />
+        <label>
+          Valoare:
+          <input type="number" [(ngModel)]="invoice.amount" />
+        </label>
+        <br />
+        <button (click)="save()">Salvează</button>
+      </div>
+    }
+
+    <br />
+    <button (click)="goBack()">Înapoi</button>
+  </div>
+}
