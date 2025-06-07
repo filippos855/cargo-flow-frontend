@@ -1,4 +1,4 @@
-import { Person } from './person.model';
+import { Person } from '../../persons/models/person.model';
 
 export interface Company {
   id: number;

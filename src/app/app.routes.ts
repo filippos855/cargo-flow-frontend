@@ -1,10 +1,19 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout.component';
+import { authGuard } from './auth/guards/auth.guard';
+import { RoleGuard } from './auth/guards/role.guard';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () =>
+      import('./auth/components/login/login.component').then(m => m.LoginComponent)
+  },
+
+  {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
@@ -16,6 +25,8 @@ export const routes: Routes = [
 
       {
         path: 'orders',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'operator'] },
         children: [
           {
             path: '',
@@ -32,6 +43,8 @@ export const routes: Routes = [
 
       {
         path: 'trips',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'operator', 'manager flota'] },
         children: [
           {
             path: '',
@@ -48,6 +61,8 @@ export const routes: Routes = [
 
       {
         path: 'fleet',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'manager flota'] },
         children: [
           {
             path: '',
@@ -58,6 +73,80 @@ export const routes: Routes = [
             path: ':id',
             loadComponent: () =>
               import('./fleet/components/fleet-details/fleet-details.component').then(m => m.FleetDetailsComponent)
+          }
+        ]
+      },
+
+      {
+        path: 'invoices',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'financiar'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./invoices/components/invoices.component').then(m => m.InvoicesComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./invoices/components/invoice-details/invoice-details.component').then(m => m.InvoiceDetailsComponent)
+          }
+        ]
+      },
+
+      {
+        path: 'resources',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'operator', 'manager flota', 'financiar'] },
+        children: [
+          {
+            path: 'companies',
+            children: [
+              {
+                path: '',
+                loadComponent: () =>
+                  import('./companies/components/companies.component').then(m => m.CompaniesComponent)
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./companies/components/company-details/company-details.component').then(m => m.CompanyDetailsComponent)
+              }
+            ]
+          },
+          {
+            path: 'persons',
+            children: [
+              {
+                path: '',
+                loadComponent: () =>
+                  import('./persons/components/persons.component').then(m => m.PersonsComponent)
+              },
+              {
+                path: ':id',
+                loadComponent: () =>
+                  import('./persons/components/person-details/person-details.component').then(m => m.PersonDetailsComponent)
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        path: 'users',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] },
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./users/components/users.component').then(m => m.UsersComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./users/components/user-details/user-details.component').then(m => m.UserDetailsComponent)
           }
         ]
       }

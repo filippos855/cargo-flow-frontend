@@ -1,0 +1,30 @@
+<h2>Utilizatori</h2>
+
+<div class="toolbar">
+  <button (click)="addUser()">+ Adaugă utilizator</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Persoană</th>
+      <th>Rol</th>
+      <th>Activ</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (user of users; track user) {
+      <tr>
+        <td><a [routerLink]="['/users', user.id]">{{ user.username }}</a></td>
+        <td>
+          <a [routerLink]="['/resources/persons', user.person.id]">
+            {{ user.person.fullName }}
+          </a>
+        </td>
+        <td>{{ user.role.name }}</td>
+        <td>{{ user.isActive ? '✔️' : '❌' }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

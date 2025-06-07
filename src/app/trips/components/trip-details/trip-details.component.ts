@@ -1,22 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TripService } from '../../services/trip.service';
 import { Trip } from '../../models/trip.model';
 import { Observable, switchMap } from 'rxjs';
 
 @Component({
-    selector: 'app-trip-details',
-    imports: [CommonModule, RouterModule],
-    templateUrl: './trip-details.component.html',
-    styleUrls: ['./trip-details.component.scss']
+  selector: 'app-trip-details',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './trip-details.component.html',
+  styleUrls: ['./trip-details.component.scss']
 })
 export class TripDetailsComponent implements OnInit {
   trip$!: Observable<Trip | null>;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     private tripService: TripService
   ) {}
 
@@ -30,6 +31,6 @@ export class TripDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/trips']);
+    this.location.back();
   }
 }

@@ -8,19 +8,23 @@
     <p><strong>RCA:</strong> {{ vehicle.rcaExpiration | date: 'dd/MM/yyyy' }}</p>
     <p><strong>Disponibil:</strong> {{ vehicle.isAvailable ? 'Da' : 'Nu' }}</p>
 
-    <button (click)="enableEdit()" *ngIf="!isEditing">Editează</button>
+    @if (!isEditing) {
+      <button (click)="enableEdit()">Editează</button>
+    }
 
-    <div *ngIf="isEditing">
-      <label>
-        Disponibil:
-        <select [(ngModel)]="vehicle.isAvailable">
-          <option [ngValue]="true">Da</option>
-          <option [ngValue]="false">Nu</option>
-        </select>
-      </label>
-      <br />
-      <button (click)="save()">Salvează</button>
-    </div>
+    @if (isEditing) {
+      <div>
+        <label>
+          Disponibil:
+          <select [(ngModel)]="vehicle.isAvailable">
+            <option [ngValue]="true">Da</option>
+            <option [ngValue]="false">Nu</option>
+          </select>
+        </label>
+        <br />
+        <button (click)="save()">Salvează</button>
+      </div>
+    }
 
     <br />
     <button (click)="goBack()">Înapoi</button>

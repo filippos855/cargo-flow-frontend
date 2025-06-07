@@ -1,6 +1,6 @@
 # 📦 cargo-flow-frontend - Development README
 
-Acest fișier documentează structura, convențiile și progresul aplicației tale Angular pentru gestionarea comenzilor, curselor și resurselor unei firme de transport. Este destinat uzului intern și reluării lucrului în sesiuni viitoare cu ChatGPT în cadrul proiectului **Licenta\_Fillipos**.
+Acest fișier documentează structura, convențiile și progresul aplicației tale Angular pentru gestionarea comenzilor, curselor și resurselor unei firme de transport. Este destinat uzului intern și reluării lucrului în sesiuni viitoare cu ChatGPT în cadrul proiectului **Licenta_Fillipos**.
 
 ---
 
@@ -17,62 +17,86 @@ Acest fișier documentează structura, convențiile și progresul aplicației ta
 
 ```plaintext
 src/app/
+├── auth/
+│   ├── components/
+│   │   └── login/
+│   │       ├── login.component.ts
+│   │       ├── login.component.html
+│   │       ├── login.component.scss
+│   ├── guards/
+│   │   ├── auth.guard.ts
+│   │   └── role.guard.ts
+│   └── services/
+│       └── auth.service.ts
 ├── core/
 │   └── layout/
 │       ├── layout.component.html
 │       ├── layout.component.scss
-│       ├── layout.component.spec.ts
 │       └── layout.component.ts
 ├── dashboard/
 │   └── components/
-│       ├── dashboard.component.html
-│       ├── dashboard.component.scss
-│       ├── dashboard.component.spec.ts
 │       └── dashboard.component.ts
 ├── orders/
 │   ├── components/
-│   │   ├── orders.component.html
-│   │   ├── orders.component.scss
-│   │   ├── orders.component.spec.ts
 │   │   ├── orders.component.ts
 │   │   └── order-details/
-│   │       ├── order-details.component.html
-│   │       ├── order-details.component.scss
-│   │       ├── order-details.component.spec.ts
 │   │       └── order-details.component.ts
 │   ├── models/
 │   │   └── order.model.ts
 │   └── services/
-│       ├── order.service.spec.ts
 │       └── order.service.ts
 ├── trips/
 │   ├── components/
-│   │   ├── trips.component.html
-│   │   ├── trips.component.scss
-│   │   ├── trips.component.spec.ts
+│   │   ├── trips.component.ts
 │   │   └── trip-details/
-│   │       ├── trip-details.component.html
-│   │       ├── trip-details.component.scss
-│   │       ├── trip-details.component.spec.ts
 │   │       └── trip-details.component.ts
 │   ├── models/
 │   │   └── trip.model.ts
 │   └── services/
-│       ├── trip.service.ts
-│       └── trip.service.spec.ts
+│       └── trip.service.ts
+├── fleet/
+│   ├── components/
+│   │   ├── fleet.component.ts
+│   │   └── fleet-details/
+│   │       └── fleet-details.component.ts
+│   ├── models/
+│   │   └── fleet-vehicle.model.ts
+│   └── services/
+│       └── fleet.service.ts
+├── invoices/
+│   ├── components/
+│   │   ├── invoices.component.ts
+│   │   └── invoice-details/
+│   │       └── invoice-details.component.ts
+│   ├── models/
+│   │   └── invoice.model.ts
+│   └── services/
+│       └── invoice.service.ts
+├── reports/
+│   └── components/...
+├── users/
+│   ├── components/
+│   │   ├── users.component.ts
+│   │   └── user-details/
+│   │       └── user-details.component.ts
+│   ├── models/
+│   │   └── user.model.ts
+│   └── services/
+│       └── user.service.ts
+├── resources/
+│   ├── companies/
+│   │   ├── components/...
+│   ├── persons/
+│   │   ├── components/...
 ├── shared/
 │   └── models/
 │       ├── company.model.ts
+│       ├── person.model.ts
 │       ├── dictionary-item.model.ts
-│       ├── dictionary.model.ts
-│       ├── fleet-vehicle.model.ts
-│       └── person.model.ts
-├── app.component.html
-├── app.component.scss
-├── app.component.spec.ts
-├── app.component.ts
+│       └── dictionary.model.ts
+├── app.routes.ts
 ├── app.config.ts
-└── app.routes.ts
+└── app.component.*
 ```
 
 ---
@@ -83,7 +107,7 @@ src/app/
 * Textele afișate în UI (buton, titlu, label) sunt în **română**.
 * Toate componentele sunt **standalone** (`standalone: true`) și lazy-loaded cu `loadComponent`.
 * Stilurile folosesc `scss` și sunt unificate vizual (font, culori, butoane, tabele).
-* Linkurile între entități (ex: comandă → cursă, cursă → comandă) sunt implementate și stilizate consistent.
+* Linkurile între entități (ex: comandă → cursă, utilizator → persoană) sunt implementate și stilizate consistent.
 
 ---
 
@@ -92,47 +116,55 @@ src/app/
 | Modul         | Componentă principală        | Stare                                                | Detalii                 |
 | ------------- | ---------------------------- | ---------------------------------------------------- | ----------------------- |
 | Dashboard     | `dashboard.component.ts`     | ✅ Funcțional                                         |                         |
-| Orders        | `orders.component.ts`        | ✅ Listare și detalii                                 | Comenzi legate de curse |
-| Order details | `order-details.component.ts` | ✅ Include în cursă, editable, link spre cursă        |                         |
-| Trips         | `trips.component.ts`         | ✅ Listare, detalii, adăugare mock, link spre comenzi |                         |
-| Trip details  | `trip-details.component.ts`  | ✅ Vizualizare completă + comenzi incluse             |                         |
-| Fleet         | —                            | ⏳ Urmează                                            |                         |
-| Invoices      | —                            | ⏳ Urmează                                            |                         |
+| Orders        | `orders.component.ts`        | ✅ Listare, detalii, includere în curse               |                         |
+| Trips         | `trips.component.ts`         | ✅ Listare, detalii, comenzi incluse                  |                         |
+| Fleet         | `fleet.component.ts`         | ✅ Listare, detalii, editable                         |                         |
+| Invoices      | `invoices.component.ts`      | ✅ Listare, detalii, emitere pentru comenzi/curse     |                         |
 | Reports       | —                            | ⏳ Urmează                                            |                         |
-| Users         | —                            | ⏳ Urmează                                            |                         |
+| Users         | `users.component.ts`         | ✅ Autentificare, listare, roluri, legat de persoane  |                         |
 | API Clients   | —                            | ⏳ Urmează                                            |                         |
-| Resources     | Companies + Persons          | ⏳ Meniu existent, funcționalitate urmează            |                         |
+| Resources     | Companies + Persons          | ✅ Funcționale, legături active                       |                         |
 
 ---
 
-## 🧹 Modele existente (shared/models + trips/models)
+## 🧹 Modele principale
 
-* `Company`: `id`, `name`, `code`, `contactPerson: Person`, `cui?`, `address?`
+* `User`: `id`, `username`, `passwordHash`, `person: Person`, `role: DictionaryItem`, `isActive`
+* `Invoice`: `id`, `number`, `invoiceType`, `status`, `issueDate`, `dueDate`, `company`, `amount`, `currency`, `order?`, `trip?`
+* `Company`: `id`, `name`, `code`, `contactPerson`, `cui?`, `address?`
 * `Person`: `id`, `fullName`, `phone?`, `email?`
-* `DictionaryItem`: `id`, `name`, `dictionaryId` (folosit pentru `OrderStatus`, `TripStatus`, `VehicleType`)
-* `FleetVehicle`: `id`, `identifier`, `type: DictionaryItem`, `itpExpiration`, `rcaExpiration`, `isAvailable`
 * `Order`: `id`, `number`, `createdDate`, `company`, `deliveryPerson`, `status`, `trip?`
 * `Trip`: `id`, `number`, `startDate`, `endDate?`, `status`, `transportCompany`, `driver?`, `tractorUnit?`, `trailer?`, `orders?`
+* `FleetVehicle`: `id`, `identifier`, `type`, `itpExpiration`, `rcaExpiration`, `isAvailable`
+* `DictionaryItem`: `id`, `name`, `dictionaryId`
 
 ---
 
-## ⚙️ Servicii
+## 🛡️ Autentificare și roluri
 
-* `OrderService` oferă:
+* Pagina de login funcțională: username + parolă cu `remember me`
+* Utilizatorul curent e stocat în `localStorage` sau `sessionStorage`
+* Roluri disponibile:
+  - **admin**: acces complet
+  - **operator**: comenzi, curse, resurse
+  - **manager flota**: curse, flotă, resurse
+  - **financiar**: facturi, rapoarte, resurse
 
-  * `getOrders()`, `getOrderById(id)`, `updateOrder()`, `includeInMockTrip(order)`
-* `TripService` oferă:
+* Layoutul afișează userul logat + rolul în meniul lateral (jos) + buton logout
 
-  * `getTrips()`, `getTripById(id)`, `addMockTrip(trip)`
+---
+
+## 🔐 Guards și acces per pagină
+
+* `auth.guard.ts`: blochează accesul dacă nu ești logat
+* `role.guard.ts`: blochează accesul dacă nu ai rolul permis (setat în `app.routes.ts`)
 
 ---
 
 ## 📌 Alte note pentru ChatGPT
 
-* Proiectul face parte din lucrarea de licență în cadrul **Licenta\_Fillipos**
-* Branch activ de lucru: `develop`
-* Angular 20 + standalone components + routing lazy (`loadComponent`)
-* TypeScript 5.8.3 + Node.js 20.19.2 + npm 11.4.1
-* Testele folosesc `provideRouter([])`
-* Layoutul include meniu lateral cu icoane animate și collapse
-* Se urmărește consistența vizuală și UX fluid între module
+* Proiectul face parte din lucrarea de licență **Licenta_Fillipos**
+* Branch activ: `develop`
+* Obiectiv curent: finalizare funcționalități detaliu (edit/delete) + pagini de creare
+* În viitor: conectare cu backend real pentru login + persistare date reale
+* Urmează implementare pentru `API Clients`, `Reports`

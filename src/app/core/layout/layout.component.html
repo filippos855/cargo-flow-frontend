@@ -10,73 +10,104 @@
             <span>Dashboard</span>
           }
         </li>
-        <li routerLink="/orders" routerLinkActive="active">
-          <i class="icon">📦</i>
-          @if (!collapsed) {
-            <span>Comenzi</span>
-          }
-        </li>
-        <li routerLink="/trips" routerLinkActive="active">
-          <i class="icon">🚚</i>
-          @if (!collapsed) {
-            <span>Curse</span>
-          }
-        </li>
-        <li routerLink="/fleet" routerLinkActive="active">
-          <i class="icon">🚛</i>
-          @if (!collapsed) {
-            <span>Flotă</span>
-          }
-        </li>
-        <li routerLink="/invoices" routerLinkActive="active">
-          <i class="icon">📑</i>
-          @if (!collapsed) {
-            <span>Facturi</span>
-          }
-        </li>
-        <li routerLink="/reports" routerLinkActive="active">
-          <i class="icon">📊</i>
-          @if (!collapsed) {
-            <span>Rapoarte</span>
-          }
-        </li>
 
-        <!-- Submeniu Resurse -->
-        <li class="has-children" (click)="toggleResources()">
-          <i class="icon">🧾</i>
-          @if (!collapsed) {
-            <span>Resurse</span>
-          }
-          @if (!collapsed) {
-            <span class="arrow">{{ resourcesExpanded ? '▼' : '▶' }}</span>
-          }
-        </li>
-
-        @if (resourcesExpanded && !collapsed) {
-          <ul class="submenu">
-            <li routerLink="/resources/companies" routerLinkActive="active">
-              <i class="icon">🏢</i> <span>Firme</span>
-            </li>
-            <li routerLink="/resources/persons" routerLinkActive="active">
-              <i class="icon">👥</i> <span>Persoane</span>
-            </li>
-          </ul>
+        @if (hasRole('admin', 'operator')) {
+          <li routerLink="/orders" routerLinkActive="active">
+            <i class="icon">📦</i>
+            @if (!collapsed) {
+              <span>Comenzi</span>
+            }
+          </li>
         }
 
-        <li routerLink="/users" routerLinkActive="active">
-          <i class="icon">👤</i>
-          @if (!collapsed) {
-            <span>Utilizatori</span>
+        @if (hasRole('admin', 'operator', 'manager flota')) {
+          <li routerLink="/trips" routerLinkActive="active">
+            <i class="icon">🚚</i>
+            @if (!collapsed) {
+              <span>Curse</span>
+            }
+          </li>
+        }
+
+        @if (hasRole('admin', 'manager flota')) {
+          <li routerLink="/fleet" routerLinkActive="active">
+            <i class="icon">🚛</i>
+            @if (!collapsed) {
+              <span>Flotă</span>
+            }
+          </li>
+        }
+
+        @if (hasRole('admin', 'financiar')) {
+          <li routerLink="/invoices" routerLinkActive="active">
+            <i class="icon">📑</i>
+            @if (!collapsed) {
+              <span>Facturi</span>
+            }
+          </li>
+        }
+
+        @if (hasRole('admin', 'financiar')) {
+          <li routerLink="/reports" routerLinkActive="active">
+            <i class="icon">📊</i>
+            @if (!collapsed) {
+              <span>Rapoarte</span>
+            }
+          </li>
+        }
+
+        @if (hasRole('admin', 'operator', 'manager flota', 'financiar')) {
+          <li class="has-children" (click)="toggleResources()">
+            <i class="icon">🧾</i>
+            @if (!collapsed) {
+              <span>Resurse</span>
+            }
+            @if (!collapsed) {
+              <span class="arrow">{{ resourcesExpanded ? '▼' : '▶' }}</span>
+            }
+          </li>
+
+          @if (resourcesExpanded && !collapsed) {
+            <ul class="submenu">
+              <li routerLink="/resources/companies" routerLinkActive="active">
+                <i class="icon">🏢</i> <span>Firme</span>
+              </li>
+              <li routerLink="/resources/persons" routerLinkActive="active">
+                <i class="icon">👥</i> <span>Persoane</span>
+              </li>
+            </ul>
           }
-        </li>
-        <li routerLink="/api-clients" routerLinkActive="active">
-          <i class="icon">🔑</i>
-          @if (!collapsed) {
-            <span>API Clients & Tokens</span>
-          }
-        </li>
+        }
+
+        @if (hasRole('admin')) {
+          <li routerLink="/users" routerLinkActive="active">
+            <i class="icon">👤</i>
+            @if (!collapsed) {
+              <span>Utilizatori</span>
+            }
+          </li>
+          <li routerLink="/api-clients" routerLinkActive="active">
+            <i class="icon">🔑</i>
+            @if (!collapsed) {
+              <span>API Clients & Tokens</span>
+            }
+          </li>
+        }
       </ul>
     </nav>
+
+    @if (currentUser) {
+      <div class="user-info" [class.collapsed]="collapsed">
+        <hr />
+        @if (!collapsed) {
+          <div class="user-label">
+            <div class="user-name">{{ currentUser.person.fullName }}</div>
+            <div class="user-role">{{ currentUser.role.name }}</div>
+          </div>
+          <button (click)="logout()">Ieșire</button>
+        }
+      </div>
+    }
   </aside>
 
   <main class="main-content">
