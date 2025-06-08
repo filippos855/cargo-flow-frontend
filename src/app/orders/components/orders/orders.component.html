@@ -1,0 +1,59 @@
+<h2>Comenzi</h2>
+
+<div class="toolbar">
+  <button (click)="addOrder()">+ Adaugă comandă</button>
+</div>
+
+@if (isAdding) {
+  <app-order-form
+    [order]="newOrder"
+    [companies]="companies"
+    [persons]="persons"
+    [statuses]="statuses"
+    [trips]="trips"
+    [isEditMode]="false"
+    (save)="saveNewOrder($event)"
+    (cancel)="cancelNewOrder()"
+  />
+} @else {
+  <table>
+    <thead>
+      <tr>
+        <th>Număr</th>
+        <th>Client</th>
+        <th>Persoană livrare</th>
+        <th>Adresă livrare</th>
+        <th>Status</th>
+        <th>Data comandă</th>
+        <th>Cursă</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (order of orders; track order) {
+        <tr>
+          <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
+          <td>{{ order.company.name }}</td>
+          <td>{{ order.deliveryPerson.fullName }}</td>
+          <td>{{ order.address }}</td>
+          <td>{{ order.status.name }}</td>
+          <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            @if (order.trip) {
+              <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

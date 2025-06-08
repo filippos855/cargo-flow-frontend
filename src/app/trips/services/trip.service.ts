@@ -72,6 +72,7 @@ export class TripService {
             phone: '0733000111',
             email: 'andrei.stancu@emag.ro'
           },
+          address: 'Str. Tineretului 15, București',
           status: { id: 2, name: 'În curs', dictionaryId: 1 },
           trip: undefined
         }
@@ -89,7 +90,6 @@ export class TripService {
   }
 
   addMockTrip(trip: Trip): void {
-  this.mockTrips.push(trip);
-}
-
+    this.mockTrips.push(trip);
+  }
 }

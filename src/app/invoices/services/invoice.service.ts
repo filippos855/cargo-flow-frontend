@@ -48,6 +48,7 @@ export class InvoiceService {
       createdDate: new Date(),
       company,
       deliveryPerson,
+      address: 'Șos. Colentina 101, București',
       status: statusInCursa
     };
 

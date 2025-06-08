@@ -11,82 +11,94 @@ import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 })
 export class OrderService {
   private orders: Order[] = [];
+  private mockTrips: Trip[] = [];
+  private nextId = 3;
+
+  private mockCompanies: Company[] = [
+    { id: 1, name: 'EMAG SRL', code: 'EMAG', contactPerson: { id: 1, fullName: 'Ion Popescu' } },
+    { id: 2, name: 'ALtex SRL', code: 'ALTEX', contactPerson: { id: 3, fullName: 'Mihai Georgescu' } }
+  ];
+
+  private mockPersons: Person[] = [
+    { id: 2, fullName: 'Maria Ionescu' },
+    { id: 4, fullName: 'Adrian Vlad' }
+  ];
+
+  private statusInitiat: DictionaryItem = { id: 1, name: 'Inițiat', dictionaryId: 1 };
+  private statusInCursa: DictionaryItem = { id: 2, name: 'Inclusă în cursă', dictionaryId: 1 };
+  private statusFinalizata: DictionaryItem = { id: 3, name: 'Finalizată', dictionaryId: 1 };
 
   constructor() {
-    const company: Company = {
-      id: 1,
-      name: 'EMAG SRL',
-      code: 'EMAG',
-      contactPerson: { id: 1, fullName: 'Ion Popescu' }
+    const company1 = this.mockCompanies[0];
+    const company2 = this.mockCompanies[1];
+    const deliveryPerson = this.mockPersons[0];
+
+    const tractor: FleetVehicle = {
+      id: 10,
+      identifier: 'B123XYZ',
+      type: { id: 1, name: 'Tractor', dictionaryId: 3 },
+      itpExpiration: new Date(),
+      rcaExpiration: new Date(),
+      isAvailable: true
     };
 
-    const deliveryPerson: Person = {
-      id: 2,
-      fullName: 'Maria Ionescu'
+    const trailer: FleetVehicle = {
+      id: 11,
+      identifier: 'CJ55ABC',
+      type: { id: 2, name: 'Trailer', dictionaryId: 3 },
+      itpExpiration: new Date(),
+      rcaExpiration: new Date(),
+      isAvailable: true
     };
 
-    const statusInitiat: DictionaryItem = {
-      id: 1,
-      name: 'Inițiat',
-      dictionaryId: 1
-    };
-
-    const statusInCursa: DictionaryItem = {
-      id: 2,
-      name: 'Inclusă în cursă',
-      dictionaryId: 1
-    };
-
-    const trip: Trip = {
-      id: 101,
-      number: 'TRIP2024001',
-      startDate: new Date(),
-      status: {
-        id: 3,
-        name: 'Planificată',
-        dictionaryId: 2
+    this.mockTrips = [
+      {
+        id: 101,
+        number: 'TRIP2024001',
+        startDate: new Date('2025-06-01'),
+        status: { id: 3, name: 'Planificată', dictionaryId: 2 },
+        transportCompany: company1,
+        driver: { id: 5, fullName: 'George Vasile' },
+        tractorUnit: tractor,
+        trailer: trailer,
+        orders: []
       },
-      transportCompany: company,
-      driver: { id: 3, fullName: 'George Vasile' },
-      tractorUnit: {
-        id: 10,
-        identifier: 'B123XYZ',
-        type: { id: 1, name: 'Tractor', dictionaryId: 3 },
-        itpExpiration: new Date(),
-        rcaExpiration: new Date(),
-        isAvailable: true
-      },
-      trailer: {
-        id: 11,
-        identifier: 'CJ55ABC',
-        type: { id: 2, name: 'Trailer', dictionaryId: 3 },
-        itpExpiration: new Date(),
-        rcaExpiration: new Date(),
-        isAvailable: true
-      },
-      orders: []
-    };
+      {
+        id: 102,
+        number: 'TRIP2024002',
+        startDate: new Date('2025-06-03'),
+        status: { id: 3, name: 'Planificată', dictionaryId: 2 },
+        transportCompany: company2,
+        driver: { id: 6, fullName: 'Raluca Moraru' },
+        tractorUnit: tractor,
+        trailer: trailer,
+        orders: []
+      }
+    ];
 
     this.orders = [
       {
         id: 1,
         number: 'EMAG1',
         createdDate: new Date(),
-        company,
+        company: company1,
         deliveryPerson,
-        status: statusInitiat,
-        trip: undefined
+        address: 'Str. Aviatorilor 10, București',
+        status: this.statusInitiat
       },
       {
         id: 2,
         number: 'EMAG2',
         createdDate: new Date(),
-        company,
+        company: company1,
         deliveryPerson,
-        status: statusInCursa,
-        trip
+        address: 'Bd. Libertății 5, București',
+        status: this.statusInCursa,
+        trip: this.mockTrips[0]
       }
     ];
+
+    this.mockTrips[0].orders?.push(this.orders[1]);
   }
 
   getOrders(): Order[] {
@@ -104,48 +116,69 @@ export class OrderService {
     }
   }
 
+  createOrder(order: Order): void {
+    order.id = this.nextId++;
+    order.createdDate = new Date();
+    this.orders.push(order);
+
+    if (order.trip) {
+      const trip = this.mockTrips.find(t => t.id === order.trip?.id);
+      if (trip) {
+        if (!trip.orders) trip.orders = [];
+        const alreadyIncluded = trip.orders.some(o => o.id === order.id);
+        if (!alreadyIncluded) {
+          trip.orders.push(order);
+        }
+      }
+    }
+  }
+
+  deleteOrder(id: number): void {
+    const order = this.getOrderById(id);
+    if (!order) return;
+
+    if (order.trip) {
+      const trip = this.mockTrips.find(t => t.id === order.trip?.id);
+      if (trip?.orders) {
+        const index = trip.orders.findIndex(o => o.id === id);
+        if (index !== -1) {
+          trip.orders.splice(index, 1);
+        }
+      }
+    }
+
+    this.orders = this.orders.filter(order => order.id !== id);
+  }
+
+  getMockCompanies(): Company[] {
+    return this.mockCompanies;
+  }
+
+  getMockPersons(): Person[] {
+    return this.mockPersons;
+  }
+
+  getMockStatuses(): DictionaryItem[] {
+    return [this.statusInitiat, this.statusInCursa, this.statusFinalizata];
+  }
+
+  getMockTrips(): Trip[] {
+    return this.mockTrips;
+  }
+
   includeInMockTrip(order: Order): void {
-    const company: Company = {
-      id: 1,
-      name: 'Transport SRL',
-      code: 'TRANS',
-      contactPerson: { id: 2, fullName: 'Vasile Ion' }
-    };
+    const trip = this.mockTrips[1];
+    order.trip = trip;
+    order.status = this.statusInCursa;
 
-    const driver: Person = { id: 3, fullName: 'Popa Mihai' };
+    if (!trip.orders) {
+      trip.orders = [];
+    }
 
-    const tractorUnit: FleetVehicle = {
-      id: 10,
-      identifier: 'B123ABC',
-      type: { id: 1, name: 'Tractor', dictionaryId: 3 },
-      itpExpiration: new Date(),
-      rcaExpiration: new Date(),
-      isAvailable: true
-    };
-
-    const trailer: FleetVehicle = {
-      id: 11,
-      identifier: 'CJ07XYZ',
-      type: { id: 2, name: 'Trailer', dictionaryId: 3 },
-      itpExpiration: new Date(),
-      rcaExpiration: new Date(),
-      isAvailable: true
-    };
-
-    const mockTrip: Trip = {
-      id: 1,
-      number: 'TRIP2024001',
-      startDate: new Date(),
-      status: { id: 3, name: 'Planificată', dictionaryId: 2 },
-      transportCompany: company,
-      driver,
-      tractorUnit,
-      trailer,
-      orders: [order]
-    };
-
-    order.trip = mockTrip;
-    order.status = { id: 2, name: 'Inclusă în cursă', dictionaryId: 1 };
+    const alreadyIncluded = trip.orders.some(o => o.id === order.id);
+    if (!alreadyIncluded) {
+      trip.orders.push(order);
+    }
 
     this.updateOrder(order);
   }
