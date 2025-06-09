@@ -1,6 +1,6 @@
 <h2>Detalii cursă</h2>
 
-@if (trip$ | async; as trip) {
+@if (trip && !isEditing) {
   <div>
     <p><strong>Număr:</strong> {{ trip.number }}</p>
     <p><strong>Dată început:</strong> {{ trip.startDate | date: 'dd/MM/yyyy HH:mm' }}</p>
@@ -10,37 +10,136 @@
     <p><strong>Șofer:</strong> {{ trip.driver?.fullName || '—' }}</p>
     <p><strong>Tractor:</strong> {{ trip.tractorUnit?.identifier || '—' }}</p>
     <p><strong>Remorcă:</strong> {{ trip.trailer?.identifier || '—' }}</p>
-    <h3>Comenzi incluse</h3>
-    @if (trip.orders?.length) {
-      <div>
-        <table>
-          <thead>
-            <tr>
-              <th>Număr comandă</th>
-              <th>Client</th>
-              <th>Data adăugare</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (order of trip.orders; track order) {
-              <tr>
-                <td>
-                  <a [routerLink]="['/orders', order.id]">{{ order.number }}</a>
-                </td>
-                <td>{{ order.company.name }}</td>
-                <td>{{ order.createdDate | date: 'shortDate' }}</td>
-              </tr>
+
+    <br />
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
+
+    <div class="order-selector">
+      <button (click)="toggleOrderSelector()">Includere comandă în cursă</button>
+
+      @if (showOrderSelector) {
+        <div class="selector-inline">
+          <select [(ngModel)]="selectedOrderForTrip">
+            <option [ngValue]="undefined">— selectează comanda —</option>
+            @for (order of availableOrders; track order) {
+              <option [ngValue]="order">
+                {{ order.number }} - {{ order.company.name }} ({{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }})
+              </option>
             }
-          </tbody>
-        </table>
+          </select>
+          <button (click)="includeOrder()">Adaugă</button>
+        </div>
+      }
+    </div>
+
+    <h3>Comenzi incluse</h3>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după număr sau client"
+      class="search-input"
+    />
+
+    @if (filteredOrders.length) {
+      <table>
+        <thead>
+          <tr>
+            <th (click)="setSort('number')">Număr comandă</th>
+            <th (click)="setSort('company')">Client</th>
+            <th (click)="setSort('createdDate')">Data adăugare</th>
+            <th>Acțiune</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of filteredOrders; track order) {
+            <tr>
+              <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
+              <td>{{ order.company.name }}</td>
+              <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><button (click)="excludeOrder(order.id)">Scoate</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+        <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+        <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
       </div>
     } @else {
-      <p>Nu există comenzi incluse în această cursă.</p>
+      <p>Nu există comenzi care corespund filtrului.</p>
     }
-    <br />
-    <button (click)="goBack()">← Înapoi</button>
   </div>
-} @else {
-  <p>Se încarcă detaliile cursei...</p>
 }
 
+@if (trip && isEditing) {
+  <app-trip-form
+    [trip]="trip"
+    [companies]="companies"
+    [persons]="persons"
+    [vehicles]="vehicles"
+    [statuses]="statuses"
+    [isEditMode]="true"
+    (save)="save()"
+    (cancel)="cancel()"
+  />
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Ești sigur că vrei să ștergi această cursă?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showEditConfirm) {
+  <app-confirm-dialog
+    [title]="'Cursă finalizată'"
+    [message]="'Această cursă are status finalizat. Sigur vrei să o editezi?'"
+    (confirm)="confirmEnableEdit()"
+    (cancel)="cancelEnableEdit()"
+  />
+}
+
+@if (showFinalizedDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Cursă finalizată'"
+    [message]="'Această cursă este finalizată. Sigur vrei să o ștergi?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showFinalizedIncludeConfirm) {
+  <app-confirm-dialog
+    [title]="'Cursă finalizată'"
+    [message]="'Această cursă este finalizată. Sigur vrei să adaugi o comandă?'"
+    (confirm)="confirmIncludeOrder()"
+    (cancel)="cancelIncludeOrder()"
+  />
+}
+
+@if (showFinalizedExcludeConfirmId !== null) {
+  <app-confirm-dialog
+    [title]="'Cursă finalizată'"
+    [message]="'Această cursă este finalizată. Sigur vrei să excluzi comanda?'"
+    (confirm)="confirmExcludeOrder()"
+    (cancel)="cancelExcludeOrder()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

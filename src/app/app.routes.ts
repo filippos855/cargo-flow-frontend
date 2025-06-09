@@ -49,7 +49,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./trips/components/trips.component').then(m => m.TripsComponent)
+              import('./trips/components/trips/trips.component').then(m => m.TripsComponent)
           },
           {
             path: ':id',

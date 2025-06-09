@@ -14,7 +14,7 @@
         <strong>Cursă asociată:</strong>
         <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
       </p>
-      <button (click)="removeFromTrip()">Scoate din cursă</button>
+      <button (click)="requestRemoveFromTrip()">Scoate din cursă</button>
     } @else {
       <p><strong>Cursă asociată:</strong> —</p>
       <p>
@@ -68,6 +68,15 @@
     [message]="'Această comandă are status finalizat. Sigur vrei să o editezi?'"
     (confirm)="confirmEnableEdit()"
     (cancel)="cancelEnableEdit()"
+  />
+}
+
+@if (showRemoveConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare excludere din cursă'"
+    [message]="'Sigur vrei să excluzi această comandă din cursă?'"
+    (confirm)="confirmRemoveFromTrip()"
+    (cancel)="cancelRemoveFromTrip()"
   />
 }
 

@@ -1,0 +1,76 @@
+<h2>Curse</h2>
+
+@if (isAdding) {
+  <app-trip-form
+    [trip]="newTrip"
+    [companies]="companies"
+    [persons]="persons"
+    [vehicles]="vehicles"
+    [statuses]="statuses"
+    [isEditMode]="false"
+    (save)="saveNewTrip($event)"
+    (cancel)="cancelNewTrip()"
+  />
+} @else {
+  @if (filteredTrips.length) {
+    <div class="filters-toolbar">
+      <button (click)="addTrip()">+ Adaugă cursă</button>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Caută după număr, firmă, șofer sau status"
+        class="search-input"
+      />
+
+      <label class="date-filter">
+        De la:
+        <input type="date" [(ngModel)]="filterStartDateFrom" />
+      </label>
+    
+      <label class="date-filter">
+        Până la:
+        <input type="date" [(ngModel)]="filterStartDateTo" />
+      </label>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th (click)="setSort('number')">Număr</th>
+          <th>Firmă transportatoare</th>
+          <th (click)="setSort('startDate')">Dată început</th>
+          <th (click)="setSort('driver')">Șofer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (trip of filteredTrips; track trip) {
+          <tr>
+            <td><a [routerLink]="['/trips', trip.id]">{{ trip.number }}</a></td>
+            <td>{{ trip.transportCompany.name }}</td>
+            <td>{{ trip.startDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ trip.driver?.fullName || '—' }}</td>
+            <td>{{ trip.status.name }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit curse care corespund filtrului.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

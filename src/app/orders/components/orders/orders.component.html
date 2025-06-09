@@ -1,9 +1,5 @@
 <h2>Comenzi</h2>
 
-<div class="toolbar">
-  <button (click)="addOrder()">+ Adaugă comandă</button>
-</div>
-
 @if (isAdding) {
   <app-order-form
     [order]="newOrder"
@@ -16,38 +12,69 @@
     (cancel)="cancelNewOrder()"
   />
 } @else {
-  <table>
-    <thead>
-      <tr>
-        <th>Număr</th>
-        <th>Client</th>
-        <th>Persoană livrare</th>
-        <th>Adresă livrare</th>
-        <th>Status</th>
-        <th>Data comandă</th>
-        <th>Cursă</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (order of orders; track order) {
+  @if (filteredOrders.length) {
+    <div class="filters-toolbar">
+      <button (click)="addOrder()">+ Adaugă comandă</button>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Caută după număr, firmă, persoană, status, adresă, cursă"
+        class="search-input"
+      />
+
+      <div class="date-filter">
+        <label>De la:</label>
+        <input type="date" [(ngModel)]="filterStartDate" />
+      </div>
+
+      <div class="date-filter">
+        <label>Până la:</label>
+        <input type="date" [(ngModel)]="filterEndDate" />
+      </div>
+    </div>
+
+    <table>
+      <thead>
         <tr>
-          <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
-          <td>{{ order.company.name }}</td>
-          <td>{{ order.deliveryPerson.fullName }}</td>
-          <td>{{ order.address }}</td>
-          <td>{{ order.status.name }}</td>
-          <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>
-            @if (order.trip) {
-              <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
-            } @else {
-              <span>—</span>
-            }
-          </td>
+          <th (click)="setSort('number')">Număr</th>
+          <th (click)="setSort('company')">Client</th>
+          <th (click)="setSort('deliveryPerson')">Persoană livrare</th>
+          <th>Adresă livrare</th>
+          <th (click)="setSort('status')">Status</th>
+          <th (click)="setSort('createdDate')">Dată comandă</th>
+          <th>Cursă</th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (order of filteredOrders; track order) {
+          <tr>
+            <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
+            <td>{{ order.company.name }}</td>
+            <td>{{ order.deliveryPerson.fullName }}</td>
+            <td>{{ order.address }}</td>
+            <td>{{ order.status.name }}</td>
+            <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              @if (order.trip) {
+                <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+              } @else {
+                —
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit comenzi care corespund filtrului.</p>
+  }
 }
 
 @if (showNotification) {

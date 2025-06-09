@@ -1,7 +1,7 @@
 h2 {
   margin-bottom: 1rem;
-  color: #2f3542;
   font-size: 1.75rem;
+  color: #2f3542;
 }
 
 .filters-toolbar {
@@ -55,17 +55,22 @@ h2 {
   }
 }
 
+th {
+  cursor: pointer;
+  user-select: none;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   overflow: hidden;
 
   th,
   td {
-    padding: 0.75rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid #ddd;
   }
@@ -74,7 +79,6 @@ table {
     background-color: #f1f2f6;
     font-weight: 600;
     color: #2f3542;
-    cursor: pointer;
   }
 
   td {

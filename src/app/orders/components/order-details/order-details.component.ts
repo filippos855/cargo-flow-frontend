@@ -41,6 +41,7 @@ export class OrderDetailsComponent {
   // confirm dialogs
   showDeleteConfirm = false;
   showEditConfirm = false;
+  showRemoveConfirm = false;
 
   // notification
   showNotification = false;
@@ -134,7 +135,15 @@ export class OrderDetailsComponent {
     this.showDeleteConfirm = false;
   }
 
-  removeFromTrip(): void {
+  requestRemoveFromTrip(): void {
+  this.showRemoveConfirm = true;
+  }
+  
+  cancelRemoveFromTrip(): void {
+    this.showRemoveConfirm = false;
+  }
+  
+  confirmRemoveFromTrip(): void {
     if (this.order.trip) {
       const trip = this.trips.find(t => t.id === this.order.trip?.id);
       if (trip?.orders) {
@@ -144,8 +153,10 @@ export class OrderDetailsComponent {
       this.order.trip = undefined;
       this.selectedTripForOrder = undefined;
       this.order.status = this.statuses.find(s => s.name === 'Inițiat')!;
+      this.orderService.updateOrder(this.order);
       this.showToast('Comanda a fost scoasă din cursă.', 'info');
     }
+    this.showRemoveConfirm = false;
   }
 
   goBack(): void {

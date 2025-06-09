@@ -1,0 +1,95 @@
+<form (ngSubmit)="submitForm()" class="trip-form">
+  <div class="form-group">
+    <label for="company">Firmă transport</label>
+    <select id="company" [(ngModel)]="trip.transportCompany" name="company" required>
+      <option [ngValue]="undefined" disabled selected>Alege firma</option>
+      @for (company of companies; track company) {
+        <option [ngValue]="company">{{ company.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="driver">Șofer</label>
+    <select id="driver" [(ngModel)]="trip.driver" name="driver">
+      <option [ngValue]="undefined" disabled selected>Alege șoferul</option>
+      @for (person of persons; track person) {
+        <option [ngValue]="person">{{ person.fullName }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="tractor">Tractor</label>
+    <select id="tractor" [(ngModel)]="trip.tractorUnit" name="tractor">
+      <option [ngValue]="undefined" disabled selected>Alege tractorul</option>
+      @for (veh of vehicles; track veh) {
+        @if (veh.type.name === 'Tractor') {
+          <option [ngValue]="veh">{{ veh.identifier }}</option>
+        }
+      }
+    </select>
+    @if (trip.tractorUnit) {
+      <button type="button" class="clear-btn" (click)="clearTractor()">Scoate</button>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="trailer">Remorcă</label>
+    <select id="trailer" [(ngModel)]="trip.trailer" name="trailer">
+      <option [ngValue]="undefined" disabled selected>Alege remorca</option>
+      @for (veh of vehicles; track veh) {
+        @if (veh.type.name === 'Trailer') {
+          <option [ngValue]="veh">{{ veh.identifier }}</option>
+        }
+      }
+    </select>
+    @if (trip.trailer) {
+      <button type="button" class="clear-btn" (click)="clearTrailer()">Scoate</button>
+    }
+  </div>
+
+  <div class="form-group">
+    <label for="status">Status</label>
+    <select id="status" [(ngModel)]="trip.status" name="status" required>
+      <option [ngValue]="undefined" disabled selected>Alege statusul</option>
+      @for (status of statuses; track status) {
+        <option [ngValue]="status">{{ status.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="startDate">Dată început</label>
+    <input
+      id="startDate"
+      type="datetime-local"
+      [(ngModel)]="trip.startDate"
+      name="startDate"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="endDate">Dată sfârșit</label>
+    <input
+      id="endDate"
+      type="datetime-local"
+      [(ngModel)]="trip.endDate"
+      name="endDate"
+    />
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Salvează' : 'Adaugă' }}</button>
+    <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
+  </div>
+</form>
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}
