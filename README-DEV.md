@@ -1,10 +1,10 @@
-# 📦 cargo-flow-frontend - Development README
+# 🎞️ cargo-flow-frontend - Development README
 
 Acest fișier documentează structura, convențiile și progresul aplicației tale Angular pentru gestionarea comenzilor, curselor și resurselor unei firme de transport. Este destinat uzului intern și reluării lucrului în sesiuni viitoare cu ChatGPT în cadrul proiectului **Licenta\_Fillipos**.
 
 ---
 
-## 🗕️ Stack tehnologic actual
+## 📅 Stack tehnologic actual
 
 * **Angular**: 20.0.0
 * **TypeScript**: 5.8.3
@@ -56,8 +56,16 @@ src/app/
 ├── trips/
 │   ├── components/
 │   │   ├── trips.component.ts
+│   │   ├── trips.component.html
+│   │   ├── trips.component.scss
+│   │   ├── trip-form/
+│   │   │   ├── trip-form.component.ts
+│   │   │   ├── trip-form.component.html
+│   │   │   └── trip-form.component.scss
 │   │   └── trip-details/
-│   │       └── trip-details.component.ts
+│   │       ├── trip-details.component.ts
+│   │       ├── trip-details.component.html
+│   │       └── trip-details.component.scss
 │   ├── models/
 │   │   └── trip.model.ts
 │   └── services/
@@ -93,19 +101,19 @@ src/app/
 │       └── user.service.ts
 ├── resources/
 │   ├── companies/
-│   │   ├── components/...
-│   ├── persons/
-│   │   ├── components/...
+│   │   └── components/...
+│   └── persons/
+│       └── components/...
 ├── shared/
 │   ├── components/
 │   │   ├── confirm-dialog/
 │   │   │   ├── confirm-dialog.component.ts
 │   │   │   ├── confirm-dialog.component.html
 │   │   │   └── confirm-dialog.component.scss
-│   │   ├── notification/
-│   │   │   ├── notification.component.ts
-│   │   │   ├── notification.component.html
-│   │   │   └── notification.component.scss
+│   │   └── notification/
+│   │       ├── notification.component.ts
+│   │       ├── notification.component.html
+│   │       └── notification.component.scss
 │   └── models/
 │       ├── company.model.ts
 │       ├── person.model.ts
@@ -123,24 +131,24 @@ src/app/
 * Toate denumirile din cod (fișiere, clase, variabile) sunt în **engleză**.
 * Textele afișate în UI (buton, titlu, label) sunt în **română**.
 * Toate componentele sunt **standalone** (`standalone: true`) și lazy-loaded cu `loadComponent`.
-* Sintaxa folosită este modernă (Angular v17+): doar `@if`, fără `*ngIf`, `@for` în loc de `*ngFor`.
+* Sintaxa folosită este modernă (Angular v17+): doar `@if`, fără `*ngIf`, `@for` într» loc de `*ngFor`.
 * Confirmările și alertele sunt stilizate (nu se mai folosește `confirm()`/`alert()`).
 
 ---
 
 ## ✅ Progres module implementate
 
-| Modul       | Componentă principală    | Stare                                               | Detalii                                                        |
-| ----------- | ------------------------ | --------------------------------------------------- | -------------------------------------------------------------- |
-| Dashboard   | `dashboard.component.ts` | ✅ Funcțional                                        |                                                                |
-| Orders      | `orders.component.ts`    | ✅ CRUD complet + notificări moderne + confirmări UI | ConfirmDialog + NotificationComponent înlocuiesc alert/confirm |
-| Trips       | `trips.component.ts`     | ✅ Listare, detalii, comenzi incluse                 |                                                                |
-| Fleet       | `fleet.component.ts`     | ✅ Listare, detalii, editable                        |                                                                |
-| Invoices    | `invoices.component.ts`  | ✅ Listare, detalii, emitere pentru comenzi/curse    |                                                                |
-| Reports     | —                        | ⏳ Urmează                                           |                                                                |
-| Users       | `users.component.ts`     | ✅ Autentificare, listare, roluri, legat de persoane |                                                                |
-| API Clients | —                        | ⏳ Urmează                                           |                                                                |
-| Resources   | Companies + Persons      | ✅ Funcționale, legături active                      |                                                                |
+| Modul       | Componentă principală    | Stare                                               | Detalii                                                      |
+| ----------- | ------------------------ | --------------------------------------------------- | ------------------------------------------------------------ |
+| Dashboard   | `dashboard.component.ts` | ✅ Funcțional                                        |                                                              |
+| Orders      | `orders.component.ts`    | ✅ CRUD complet, paginare, sortare, filtrare         | Include/exclude din curse, ConfirmDialog/Notificări aplicate |
+| Trips       | `trips.component.ts`     | ✅ CRUD complet, comenzi incluse, UI modern          | Paginare, sortare, filtrare, adăugare/editare/ștergere curse |
+| Fleet       | `fleet.component.ts`     | ✅ Listare, detalii, editable                        |                                                              |
+| Invoices    | `invoices.component.ts`  | ✅ Listare, detalii, emitere pentru comenzi/curse    |                                                              |
+| Reports     | —                        | ⏳ Urmează                                           |                                                              |
+| Users       | `users.component.ts`     | ✅ Autentificare, listare, roluri, legat de persoane |                                                              |
+| API Clients | —                        | ⏳ Urmează                                           |                                                              |
+| Resources   | Companies + Persons      | ✅ Funcționale, legături active                      |                                                              |
 
 ---
 
@@ -160,16 +168,13 @@ src/app/
 ## 🔒 Autentificare și roluri
 
 * Pagina de login funcțională: username + parolă cu `remember me`
-
 * Utilizatorul curent e stocat în `localStorage` sau `sessionStorage`
-
 * Roluri disponibile:
 
   * **admin**: acces complet
   * **operator**: comenzi, curse, resurse
   * **manager flota**: curse, flotă, resurse
   * **financiar**: facturi, rapoarte, resurse
-
 * Layoutul afișează userul logat + rolul în meniul lateral (jos) + buton logout
 
 ---
@@ -186,7 +191,11 @@ src/app/
 * Proiectul face parte din lucrarea de licență **Licenta\_Fillipos**
 * Branch activ: `develop`
 * Obiectiv curent: aplicare completă a funcționalităților de creare/editare/ștergere cu UI modern (fără alert/confirm) în toate modulele
-* Urmează implementare pentru `API Clients`, `Reports`, și conectare la backend real
+* Modulele `Orders` și `Trips` au fost extinse complet cu:
 
-```
-```
+  * adăugare/ștergere/editare
+  * includere/excludere comenzi în curse
+  * confirmări vizuale (ConfirmDialog)
+  * notificări stilizate (NotificationComponent)
+  * sortare, paginare, filtrare avansată
+* Urmează implementare pentru `API Clients`, `Reports`, și conectare la backend real
