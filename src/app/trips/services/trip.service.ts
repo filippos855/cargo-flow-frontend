@@ -193,4 +193,10 @@ export class TripService {
   getMockAvailableOrders(): Order[] {
     return this.mockOrdersAvailable;
   }
+
+  isVehicleUsedInTrips(vehicleId: number): boolean {
+    return this.mockTrips.some(t =>
+      t.tractorUnit?.id === vehicleId || t.trailer?.id === vehicleId
+    );
+  }
 }

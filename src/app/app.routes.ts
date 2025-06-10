@@ -67,7 +67,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./fleet/components/fleet.component').then(m => m.FleetComponent)
+              import('./fleet/components/fleet/fleet.component').then(m => m.FleetComponent)
           },
           {
             path: ':id',

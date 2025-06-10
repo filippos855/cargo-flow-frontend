@@ -1,0 +1,79 @@
+<h2>Flotă</h2>
+
+@if (isAdding) {
+  <app-fleet-form
+    [vehicle]="newVehicle"
+    [isEditMode]="false"
+    (save)="saveNewVehicle($event)"
+    (cancel)="cancelNewVehicle()"
+  />
+} @else {
+  <div class="filters-toolbar">
+    <button (click)="addVehicle()">+ Adaugă vehicul</button>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după identificator sau tip"
+      class="search-input"
+    />
+
+    <label class="checkbox-filter">
+      <input type="checkbox" [(ngModel)]="filterItpExpired" />
+      ITP expirat
+    </label>
+
+    <label class="checkbox-filter">
+      <input type="checkbox" [(ngModel)]="filterRcaExpired" />
+      RCA expirat
+    </label>
+
+    <label class="checkbox-filter">
+      <input type="checkbox" [(ngModel)]="filterAvailable" />
+      Disponibil
+    </label>
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedFleet.length) {
+    <table>
+      <thead>
+        <tr>
+          <th>Identificator</th>
+          <th>Tip</th>
+          <th>ITP</th>
+          <th>RCA</th>
+          <th>Disponibil</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (vehicle of paginatedFleet; track vehicle) {
+          <tr>
+            <td><a [routerLink]="['/fleet', vehicle.id]">{{ vehicle.identifier }}</a></td>
+            <td>{{ vehicle.type.name }}</td>
+            <td>{{ vehicle.itpExpiration | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ vehicle.rcaExpiration | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ vehicle.isAvailable ? 'Da' : 'Nu' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit vehicule care corespund filtrului.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}
