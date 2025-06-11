@@ -14,20 +14,9 @@ export class InvoiceService {
   private invoices: Invoice[] = [];
 
   constructor() {
-    const contactPerson: Person = {
-      id: 1,
-      fullName: 'Ion Popescu'
-    };
-
-    const deliveryPerson: Person = {
-      id: 2,
-      fullName: 'Maria Ionescu'
-    };
-
-    const driver: Person = {
-      id: 3,
-      fullName: 'George Vasile'
-    };
+    const contactPerson: Person = { id: 1, fullName: 'Ion Popescu' };
+    const deliveryPerson: Person = { id: 2, fullName: 'Maria Ionescu' };
+    const driver: Person = { id: 3, fullName: 'George Vasile' };
 
     const company: Company = {
       id: 1,
@@ -36,7 +25,7 @@ export class InvoiceService {
       contactPerson: contactPerson
     };
 
-    const statusInCursa: DictionaryItem = {
+    const orderStatus: DictionaryItem = {
       id: 2,
       name: 'Inclusă în cursă',
       dictionaryId: 1
@@ -49,7 +38,7 @@ export class InvoiceService {
       company,
       deliveryPerson,
       address: 'Șos. Colentina 101, București',
-      status: statusInCursa
+      status: orderStatus
     };
 
     const tractorUnit: FleetVehicle = {
@@ -74,11 +63,7 @@ export class InvoiceService {
       id: 101,
       number: 'TRIP2024001',
       startDate: new Date(),
-      status: {
-        id: 3,
-        name: 'Planificată',
-        dictionaryId: 2
-      },
+      status: { id: 3, name: 'Planificată', dictionaryId: 2 },
       transportCompany: company,
       driver,
       tractorUnit,
@@ -129,10 +114,19 @@ export class InvoiceService {
     return this.invoices.find(i => i.id === id);
   }
 
+  addInvoice(invoice: Invoice): void {
+    invoice.id = Math.floor(Math.random() * 10000);
+    this.invoices.push(invoice);
+  }
+
   updateInvoice(updated: Invoice): void {
     const index = this.invoices.findIndex(i => i.id === updated.id);
     if (index !== -1) {
       this.invoices[index] = { ...updated };
     }
+  }
+
+  deleteInvoiceById(id: number): void {
+    this.invoices = this.invoices.filter(i => i.id !== id);
   }
 }

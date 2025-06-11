@@ -1,0 +1,70 @@
+<h2>Firme</h2>
+
+@if (isAdding) {
+  <app-company-form
+    [company]="newCompany"
+    [isEditMode]="false"
+    (save)="saveNewCompany($event)"
+    (cancel)="cancelNewCompany()"
+  />
+} @else {
+  <div class="filters-toolbar">
+    <button (click)="addCompany()">+ Adaugă firmă</button>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="applyFilters()"
+      placeholder="Caută după denumire, cod sau CUI"
+      class="search-input"
+    />
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedCompanies.length) {
+    <table>
+      <thead>
+        <tr>
+          <th (click)="setSort('name')">Denumire</th>
+          <th (click)="setSort('code')">Cod</th>
+          <th (click)="setSort('cui')">CUI</th>
+          <th (click)="setSort('address')">Adresă</th>
+          <th (click)="setSort('contactPerson')">Persoană contact</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (company of paginatedCompanies; track company) {
+          <tr>
+            <td>
+              <a [routerLink]="['/resources/companies', company.id]">{{ company.name }}</a>
+            </td>
+            <td>{{ company.code }}</td>
+            <td>{{ company.cui || '—' }}</td>
+            <td>{{ company.address || '—' }}</td>
+            <td>
+              <a [routerLink]="['/resources/persons', company.contactPerson.id]">
+                {{ company.contactPerson.fullName }}
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit firme.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

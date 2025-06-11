@@ -40,13 +40,14 @@
     <table>
       <thead>
         <tr>
-          <th>Identificator</th>
-          <th>Tip</th>
-          <th>ITP</th>
-          <th>RCA</th>
-          <th>Disponibil</th>
+          <th (click)="setSort('identifier')">Identificator</th>
+          <th (click)="setSort('type')">Tip</th>
+          <th (click)="setSort('itpExpiration')">ITP</th>
+          <th (click)="setSort('rcaExpiration')">RCA</th>
+          <th (click)="setSort('isAvailable')">Disponibil</th>
         </tr>
       </thead>
+
       <tbody>
         @for (vehicle of paginatedFleet; track vehicle) {
           <tr>

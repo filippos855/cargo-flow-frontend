@@ -1,0 +1,89 @@
+<form (ngSubmit)="submitForm()" class="invoice-form">
+  <div class="form-group">
+    <label for="number">Număr factură</label>
+    <input id="number" type="text" [(ngModel)]="invoice.number" name="number" required />
+  </div>
+
+  <div class="form-group">
+    <label for="company">Firmă</label>
+    <select id="company" [(ngModel)]="invoice.company" name="company" required>
+      <option [ngValue]="undefined" disabled selected>Selectează firma</option>
+      @for (c of companies; track c) {
+        <option [ngValue]="c">{{ c.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="invoiceType">Tip</label>
+    <select id="invoiceType" [(ngModel)]="invoice.invoiceType" name="invoiceType" required>
+      <option [ngValue]="undefined" disabled selected>Selectează tipul</option>
+      @for (t of invoiceTypes; track t) {
+        <option [ngValue]="t">{{ t.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="status">Status</label>
+    <select id="status" [(ngModel)]="invoice.status" name="status" required>
+      <option [ngValue]="undefined" disabled selected>Selectează statusul</option>
+      @for (s of statuses; track s) {
+        <option [ngValue]="s">{{ s.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="issueDate">Dată emitere</label>
+    <input id="issueDate" type="date" [(ngModel)]="invoice.issueDate" name="issueDate" required />
+  </div>
+
+  <div class="form-group">
+    <label for="dueDate">Scadență</label>
+    <input id="dueDate" type="date" [(ngModel)]="invoice.dueDate" name="dueDate" />
+  </div>
+
+  <div class="form-group">
+    <label for="amount">Valoare</label>
+    <input id="amount" type="number" [(ngModel)]="invoice.amount" name="amount" required />
+  </div>
+
+  <div class="form-group">
+    <label for="currency">Monedă</label>
+    <input id="currency" type="text" [(ngModel)]="invoice.currency" name="currency" required />
+  </div>
+
+  <div class="form-group">
+    <label for="order">Comandă asociată</label>
+    <select id="order" [(ngModel)]="invoice.order" name="order" [disabled]="!!invoice.trip">
+      <option [ngValue]="undefined">—</option>
+      @for (o of orders; track o) {
+        <option [ngValue]="o">{{ o.number }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="trip">Cursă asociată</label>
+    <select id="trip" [(ngModel)]="invoice.trip" name="trip" [disabled]="!!invoice.order">
+      <option [ngValue]="undefined">—</option>
+      @for (t of trips; track t) {
+        <option [ngValue]="t">{{ t.number }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Salvează' : 'Adaugă' }}</button>
+    <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
+  </div>
+</form>
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

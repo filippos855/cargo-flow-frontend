@@ -1,0 +1,44 @@
+<form (ngSubmit)="submitForm()" class="company-form">
+  <div class="form-group">
+    <label for="name">Denumire</label>
+    <input id="name" type="text" [(ngModel)]="company.name" name="name" required />
+  </div>
+
+  <div class="form-group">
+    <label for="code">Cod firmă</label>
+    <input id="code" type="text" [(ngModel)]="company.code" name="code" required />
+  </div>
+
+  <div class="form-group">
+    <label for="cui">CUI (opțional)</label>
+    <input id="cui" type="text" [(ngModel)]="company.cui" name="cui" />
+  </div>
+
+  <div class="form-group">
+    <label for="address">Adresă (opțional)</label>
+    <input id="address" type="text" [(ngModel)]="company.address" name="address" />
+  </div>
+
+  <div class="form-group">
+    <label for="contactPerson">Persoană de contact</label>
+    <select id="contactPerson" [(ngModel)]="company.contactPerson" name="contactPerson" required>
+      <option [ngValue]="undefined" disabled selected>Selectează persoana</option>
+      @for (person of persons; track person) {
+        <option [ngValue]="person">{{ person.fullName }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Salvează' : 'Adaugă' }}</button>
+    <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
+  </div>
+</form>
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

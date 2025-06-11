@@ -1,38 +1,43 @@
 <h2>Detalii firmă</h2>
 
-@if (company) {
-  <div>
-    <p><strong>Denumire:</strong> {{ company.name }}</p>
-    <p><strong>Cod:</strong> {{ company.code }}</p>
-    <p><strong>CUI:</strong> {{ company.cui || '—' }}</p>
-    <p><strong>Adresă:</strong> {{ company.address || '—' }}</p>
-    <p><strong>Persoană contact:</strong>
-      <a [routerLink]="['/resources/persons', company.contactPerson.id]">
-        {{ company.contactPerson.fullName }}
-      </a>
-    </p>
+@if (isEditing) {
+  <app-company-form
+    [company]="company"
+    [isEditMode]="true"
+    (save)="saveCompany($event)"
+    (cancel)="cancelEdit()"
+  />
+} @else if (company) {
+  <p><strong>Denumire:</strong> {{ company.name }}</p>
+  <p><strong>Cod:</strong> {{ company.code }}</p>
+  <p><strong>CUI:</strong> {{ company.cui || '—' }}</p>
+  <p><strong>Adresă:</strong> {{ company.address || '—' }}</p>
+  <p><strong>Persoană contact:</strong>
+    <a [routerLink]="['/resources/persons', company.contactPerson.id]">
+      {{ company.contactPerson.fullName }}
+    </a>
+  </p>
 
-    @if (!isEditing) {
-      <button (click)="enableEdit()">Editează</button>
-    }
-
-    @if (isEditing) {
-      <div>
-        <label>
-          CUI:
-          <input type="text" [(ngModel)]="company.cui" />
-        </label>
-        <br />
-        <label>
-          Adresă:
-          <input type="text" [(ngModel)]="company.address" />
-        </label>
-        <br />
-        <button (click)="save()">Salvează</button>
-      </div>
-    }
-
-    <br />
+  <div class="actions">
+    <button (click)="enableEdit()">Editează</button>
+    <button (click)="requestDelete()">Șterge</button>
     <button (click)="goBack()">Înapoi</button>
   </div>
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Ești sigur că vrei să ștergi această firmă?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
 }

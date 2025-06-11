@@ -85,7 +85,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./invoices/components/invoices.component').then(m => m.InvoicesComponent)
+              import('./invoices/components/invoices/invoices.component').then(m => m.InvoicesComponent)
           },
           {
             path: ':id',
@@ -106,7 +106,7 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./companies/components/companies.component').then(m => m.CompaniesComponent)
+                  import('./companies/components/companies/companies.component').then(m => m.CompaniesComponent)
               },
               {
                 path: ':id',

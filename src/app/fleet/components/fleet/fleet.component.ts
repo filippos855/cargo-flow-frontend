@@ -29,6 +29,9 @@ export class FleetComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
 
+  sortKey: keyof FleetVehicle | 'type' = 'identifier';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   showNotification = false;
   notificationMessage = '';
   notificationType: 'success' | 'info' | 'error' = 'success';
@@ -65,8 +68,36 @@ export class FleetComponent implements OnInit {
       result = result.filter(v => v.isAvailable);
     }
 
+    result.sort((a, b) => {
+      let aVal: any;
+      let bVal: any;
+
+      if (this.sortKey === 'type') {
+        aVal = a.type.name;
+        bVal = b.type.name;
+      } else {
+        aVal = a[this.sortKey];
+        bVal = b[this.sortKey];
+      }
+
+      return this.sortDirection === 'asc'
+        ? aVal > bVal ? 1 : aVal < bVal ? -1 : 0
+        : aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+    });
+
     this.currentPage = 1;
     this.filtered = result;
+  }
+
+  setSort(key: keyof FleetVehicle | 'type'): void {
+    if (this.sortKey === key) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortKey = key;
+      this.sortDirection = 'asc';
+    }
+
+    this.applyFilters();
   }
 
   get paginatedFleet(): FleetVehicle[] {
