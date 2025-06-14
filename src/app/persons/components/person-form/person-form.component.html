@@ -1,0 +1,56 @@
+<form (ngSubmit)="submitForm()" class="person-form">
+  <div class="form-group">
+    <label for="fullName">Nume complet</label>
+    <input
+      id="fullName"
+      type="text"
+      [(ngModel)]="person.fullName"
+      name="fullName"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="cnp">CNP</label>
+    <input
+      id="cnp"
+      type="text"
+      [(ngModel)]="person.cnp"
+      name="cnp"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="phone">Telefon</label>
+    <input
+      id="phone"
+      type="text"
+      [(ngModel)]="person.phone"
+      name="phone"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      [(ngModel)]="person.email"
+      name="email"
+    />
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Salvează' : 'Adaugă' }}</button>
+    <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
+  </div>
+</form>
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

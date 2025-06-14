@@ -1,6 +1,6 @@
 <h2>Detalii factură</h2>
 
-@if (invoice) {
+@if (invoice && !isEditing) {
   <div>
     <p><strong>Număr:</strong> {{ invoice.number }}</p>
     <p><strong>Tip:</strong> {{ invoice.invoiceType.name }}</p>
@@ -28,30 +28,46 @@
 
     <p><strong>Valoare:</strong> {{ invoice.amount | number:'1.2-2' }} {{ invoice.currency }}</p>
 
-    @if (!isEditing) {
-      <button (click)="enableEdit()">Editează</button>
-    }
-
-    @if (isEditing) {
-      <div>
-        <label>
-          Status:
-          <select [(ngModel)]="invoice.status.name">
-            <option>Neachitată</option>
-            <option>Achitată</option>
-          </select>
-        </label>
-        <br />
-        <label>
-          Valoare:
-          <input type="number" [(ngModel)]="invoice.amount" />
-        </label>
-        <br />
-        <button (click)="save()">Salvează</button>
-      </div>
-    }
-
     <br />
-    <button (click)="goBack()">Înapoi</button>
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
   </div>
+}
+
+@if (invoice && isEditing) {
+  <app-invoice-form
+    [invoice]="invoice"
+    [isEditMode]="true"
+    (save)="save()"
+    (cancel)="cancelEdit()"
+  />
+}
+
+@if (showEditConfirm) {
+  <app-confirm-dialog
+    [title]="'Factură achitată'"
+    [message]="'Această factură este achitată. Sigur vrei să o editezi?'"
+    (confirm)="confirmEnableEdit()"
+    (cancel)="cancelEnableEdit()"
+  />
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Această factură este achitată. Sigur vrei să o ștergi?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
 }

@@ -1,0 +1,94 @@
+<h2>Facturi</h2>
+
+@if (isAdding) {
+  <app-invoice-form
+    [invoice]="newInvoice"
+    [isEditMode]="false"
+    (save)="saveNewInvoice($event)"
+    (cancel)="cancelNewInvoice()"
+  />
+} @else {
+  <div class="filters-toolbar">
+    <button (click)="addInvoice()">+ Adaugă factură</button>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după număr, comandă, cursă, firmă"
+      class="search-input"
+    />
+
+    <label class="date-filter">
+      De la:
+      <input type="date" [(ngModel)]="filterStartDateFrom" />
+    </label>
+
+    <label class="date-filter">
+      Până la:
+      <input type="date" [(ngModel)]="filterStartDateTo" />
+    </label>
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedInvoices.length) {
+    <table>
+      <thead>
+        <tr>
+          <th (click)="setSort('number')">Număr</th>
+          <th (click)="setSort('invoiceType')">Tip</th>
+          <th (click)="setSort('status')">Status</th>
+          <th (click)="setSort('order')">Comandă / Cursă</th>
+          <th (click)="setSort('company')">Firmă</th>
+          <th (click)="setSort('amount')">Valoare</th>
+          <th (click)="setSort('currency')">Monedă</th>
+          <th (click)="setSort('issueDate')">Dată emitere</th>
+          <th (click)="setSort('dueDate')">Scadență</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (invoice of paginatedInvoices; track invoice) {
+          <tr>
+            <td><a [routerLink]="['/invoices', invoice.id]">{{ invoice.number }}</a></td>
+            <td>{{ invoice.invoiceType.name }}</td>
+            <td>{{ invoice.status.name }}</td>
+            <td>
+              @if (invoice.order) {
+                <a [routerLink]="['/orders', invoice.order.id]">{{ invoice.order.number }}</a>
+              } @else if (invoice.trip) {
+                <a [routerLink]="['/trips', invoice.trip.id]">{{ invoice.trip.number }}</a>
+              } @else {
+                <span>—</span>
+              }
+            </td>
+            <td>
+              <a [routerLink]="['/resources/companies', invoice.company.id]">
+                {{ invoice.company.name }}
+              </a>
+            </td>
+            <td>{{ invoice.amount | number:'1.2-2' }}</td>
+            <td>{{ invoice.currency }}</td>
+            <td>{{ invoice.issueDate | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ invoice.dueDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit facturi care corespund filtrului.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

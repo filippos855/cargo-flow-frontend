@@ -12,6 +12,15 @@ p {
     color: #1e90ff;
     margin-right: 0.25rem;
   }
+
+  select {
+    margin-left: 0.5rem;
+    padding: 0.4rem;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+  }
 }
 
 .trip-number {
@@ -20,7 +29,7 @@ p {
 }
 
 button {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   padding: 0.5rem 1rem;
   font-size: 14px;
   background-color: #1e90ff;
@@ -31,5 +40,46 @@ button {
 
   &:hover {
     background-color: #0d6efd;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:nth-child(1) {
+      background-color: #1e90ff;
+      color: white;
+
+      &:hover {
+        background-color: #0d6efd;
+      }
+    }
+
+    &:nth-child(2) {
+      background-color: #ff6b81;
+      color: white;
+
+      &:hover {
+        background-color: #e84118;
+      }
+    }
+
+    &:nth-child(3) {
+      background-color: #ced6e0;
+
+      &:hover {
+        background-color: #a4b0be;
+      }
+    }
   }
 }

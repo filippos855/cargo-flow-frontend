@@ -31,7 +31,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./orders/components/orders.component').then(m => m.OrdersComponent)
+              import('./orders/components/orders/orders.component').then(m => m.OrdersComponent)
           },
           {
             path: ':id',
@@ -49,7 +49,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./trips/components/trips.component').then(m => m.TripsComponent)
+              import('./trips/components/trips/trips.component').then(m => m.TripsComponent)
           },
           {
             path: ':id',
@@ -67,7 +67,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./fleet/components/fleet.component').then(m => m.FleetComponent)
+              import('./fleet/components/fleet/fleet.component').then(m => m.FleetComponent)
           },
           {
             path: ':id',
@@ -85,7 +85,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./invoices/components/invoices.component').then(m => m.InvoicesComponent)
+              import('./invoices/components/invoices/invoices.component').then(m => m.InvoicesComponent)
           },
           {
             path: ':id',
@@ -106,7 +106,7 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./companies/components/companies.component').then(m => m.CompaniesComponent)
+                  import('./companies/components/companies/companies.component').then(m => m.CompaniesComponent)
               },
               {
                 path: ':id',
@@ -121,7 +121,7 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./persons/components/persons.component').then(m => m.PersonsComponent)
+                  import('./persons/components/persons/persons.component').then(m => m.PersonsComponent)
               },
               {
                 path: ':id',
@@ -141,7 +141,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./users/components/users.component').then(m => m.UsersComponent)
+              import('./users/components/users/users.component').then(m => m.UsersComponent)
           },
           {
             path: ':id',

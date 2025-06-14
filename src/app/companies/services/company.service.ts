@@ -45,4 +45,14 @@ export class CompanyService {
       this.companies[index] = { ...updated };
     }
   }
+
+  addCompany(company: Company): void {
+    const maxId = Math.max(...this.companies.map(c => c.id), 0);
+    company.id = maxId + 1;
+    this.companies.push(company);
+  }
+
+  deleteCompanyById(id: number): void {
+    this.companies = this.companies.filter(c => c.id !== id);
+  }
 }

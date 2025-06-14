@@ -1,32 +1,43 @@
 <h2>Detalii persoană</h2>
 
-@if (person) {
+@if (person && !isEditing) {
   <div>
     <p><strong>Nume complet:</strong> {{ person.fullName }}</p>
+    <p><strong>CNP:</strong> {{ person.cnp || '—' }}</p>
     <p><strong>Telefon:</strong> {{ person.phone || '—' }}</p>
     <p><strong>Email:</strong> {{ person.email || '—' }}</p>
 
-    @if (!isEditing) {
-      <button (click)="enableEdit()">Editează</button>
-    }
-
-    @if (isEditing) {
-      <div>
-        <label>
-          Telefon:
-          <input type="text" [(ngModel)]="person.phone" />
-        </label>
-        <br />
-        <label>
-          Email:
-          <input type="email" [(ngModel)]="person.email" />
-        </label>
-        <br />
-        <button (click)="save()">Salvează</button>
-      </div>
-    }
-
     <br />
-    <button (click)="goBack()">Înapoi</button>
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
   </div>
+}
+
+@if (person && isEditing) {
+  <app-person-form
+    [person]="person"
+    [isEditMode]="true"
+    (save)="save()"
+    (cancel)="cancelEdit()"
+  />
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Sigur vrei să ștergi această persoană?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
 }

@@ -9,6 +9,7 @@ export interface Order {
   createdDate: Date;
   company: Company;
   deliveryPerson: Person;
-  status: DictionaryItem; // ex: { id: 1, name: 'Inițiat', dictionaryId: 1 }
+  address: string;
+  status: DictionaryItem;
   trip?: Trip;
 }

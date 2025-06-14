@@ -1,6 +1,6 @@
 <h2>Detalii vehicul</h2>
 
-@if (vehicle) {
+@if (vehicle && !isEditing) {
   <div>
     <p><strong>Identificator:</strong> {{ vehicle.identifier }}</p>
     <p><strong>Tip:</strong> {{ vehicle.type.name }}</p>
@@ -8,25 +8,37 @@
     <p><strong>RCA:</strong> {{ vehicle.rcaExpiration | date: 'dd/MM/yyyy' }}</p>
     <p><strong>Disponibil:</strong> {{ vehicle.isAvailable ? 'Da' : 'Nu' }}</p>
 
-    @if (!isEditing) {
-      <button (click)="enableEdit()">Editează</button>
-    }
-
-    @if (isEditing) {
-      <div>
-        <label>
-          Disponibil:
-          <select [(ngModel)]="vehicle.isAvailable">
-            <option [ngValue]="true">Da</option>
-            <option [ngValue]="false">Nu</option>
-          </select>
-        </label>
-        <br />
-        <button (click)="save()">Salvează</button>
-      </div>
-    }
-
     <br />
-    <button (click)="goBack()">Înapoi</button>
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
   </div>
+}
+
+@if (vehicle && isEditing) {
+  <app-fleet-form
+    [vehicle]="vehicle"
+    [isEditMode]="true"
+    (save)="save()"
+    (cancel)="cancelEdit()"
+  />
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Ești sigur că vrei să ștergi acest vehicul?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
 }

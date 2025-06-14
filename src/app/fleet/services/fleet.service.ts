@@ -9,17 +9,8 @@ export class FleetService {
   private fleet: FleetVehicle[] = [];
 
   constructor() {
-    const tractorType: DictionaryItem = {
-      id: 1,
-      name: 'Tractor',
-      dictionaryId: 3
-    };
-
-    const trailerType: DictionaryItem = {
-      id: 2,
-      name: 'Trailer',
-      dictionaryId: 3
-    };
+    const tractorType: DictionaryItem = { id: 1, name: 'Tractor', dictionaryId: 3 };
+    const trailerType: DictionaryItem = { id: 2, name: 'Trailer', dictionaryId: 3 };
 
     this.fleet = [
       {
@@ -49,10 +40,19 @@ export class FleetService {
     return this.fleet.find(v => v.id === id);
   }
 
+  addVehicle(vehicle: FleetVehicle): void {
+    vehicle.id = Math.floor(Math.random() * 10000);
+    this.fleet.push(vehicle);
+  }
+
   updateVehicle(updated: FleetVehicle): void {
     const index = this.fleet.findIndex(v => v.id === updated.id);
     if (index !== -1) {
       this.fleet[index] = { ...updated };
     }
+  }
+
+  deleteVehicleById(id: number): void {
+    this.fleet = this.fleet.filter(v => v.id !== id);
   }
 }

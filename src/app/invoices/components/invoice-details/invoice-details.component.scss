@@ -1,6 +1,7 @@
 h2 {
   margin-bottom: 1.5rem;
   color: #2f3542;
+  font-size: 1.75rem;
 }
 
 p {
@@ -14,22 +15,44 @@ p {
   }
 }
 
-button {
+.actions {
+  display: flex;
+  gap: 1rem;
   margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 14px;
-  background-color: #1e90ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 
-  &:hover {
-    background-color: #0d6efd;
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:nth-child(1) {
+      background-color: #1e90ff;
+      color: white;
+
+      &:hover {
+        background-color: #0d6efd;
+      }
+    }
+
+    &:nth-child(2) {
+      background-color: #ff6b81;
+      color: white;
+
+      &:hover {
+        background-color: #e84118;
+      }
+    }
+
+    &:nth-child(3) {
+      background-color: #ced6e0;
+      color: white;
+
+      &:hover {
+        background-color: #a4b0be;
+      }
+    }
   }
-}
-
-label {
-  display: block;
-  margin-top: 1rem;
 }

@@ -9,7 +9,7 @@ export interface Trip {
   number: string;
   startDate: Date;
   endDate?: Date;
-  status: DictionaryItem; // ex: { id: 2, name: 'Finalizat', dictionaryId: 2 }
+  status: DictionaryItem;
   transportCompany: Company;
   driver?: Person;
   tractorUnit?: FleetVehicle;

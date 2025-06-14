@@ -1,0 +1,71 @@
+<h2>Utilizatori</h2>
+
+@if (isAdding) {
+  <app-user-form
+    [user]="newUser"
+    [isEditMode]="false"
+    (save)="saveNewUser($event)"
+    (cancel)="cancelNewUser()"
+  />
+} @else {
+  <div class="filters-toolbar">
+    <button (click)="addUser()">+ Adaugă utilizator</button>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după username, persoană sau rol"
+      class="search-input"
+    />
+
+    <label class="checkbox-filter">
+      <input type="checkbox" [(ngModel)]="filterActive" />
+      Activ
+    </label>
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedUsers.length) {
+    <table>
+      <thead>
+        <tr>
+          <th (click)="setSort('username')">Username</th>
+          <th (click)="setSort('person')">Persoană</th>
+          <th (click)="setSort('role')">Rol</th>
+          <th (click)="setSort('isActive')">Activ</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of paginatedUsers; track user) {
+          <tr>
+            <td><a [routerLink]="['/users', user.id]">{{ user.username }}</a></td>
+            <td>
+              <a [routerLink]="['/persons', user.person.id]">
+                {{ user.person.fullName }}
+              </a>
+            </td>
+            <td>{{ user.role.name }}</td>
+            <td>{{ user.isActive ? 'Da' : 'Nu' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit utilizatori care corespund filtrului.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}
