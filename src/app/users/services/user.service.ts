@@ -74,4 +74,13 @@ export class UserService {
       this.users[index] = { ...updated };
     }
   }
+
+  addUser(user: User): void {
+    user.id = Math.floor(Math.random() * 10000);
+    this.users.push(user);
+  }
+
+  deleteUserById(id: number): void {
+    this.users = this.users.filter(u => u.id !== id);
+  }
 }

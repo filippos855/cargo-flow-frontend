@@ -1,0 +1,66 @@
+<h2>Persoane</h2>
+
+@if (isAdding) {
+  <app-person-form
+    [person]="newPerson"
+    [isEditMode]="false"
+    (save)="saveNewPerson($event)"
+    (cancel)="cancelNewPerson()"
+  />
+} @else {
+  <div class="filters-toolbar">
+    <button (click)="addPerson()">+ Adaugă persoană</button>
+
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după nume sau CNP"
+      class="search-input"
+    />
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedPersons.length) {
+    <table>
+      <thead>
+        <tr>
+          <th (click)="setSort('fullName')">Nume complet</th>
+          <th (click)="setSort('cnp')">CNP</th>
+          <th (click)="setSort('phone')">Telefon</th>
+          <th (click)="setSort('email')">Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (person of paginatedPersons; track person) {
+          <tr>
+            <td>
+              <a [routerLink]="['/resources/persons', person.id]">
+                {{ person.fullName }}
+              </a>
+            </td>
+            <td>{{ person.cnp || '—' }}</td>
+            <td>{{ person.phone || '—' }}</td>
+            <td>{{ person.email || '—' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button (click)="changePage(-1)" [disabled]="currentPage === 1">‹ Anterior</button>
+      <span>Pagina {{ currentPage }} din {{ totalPages }}</span>
+      <button (click)="changePage(1)" [disabled]="currentPage === totalPages">Următor ›</button>
+    </div>
+  } @else {
+    <p>Nu s-au găsit persoane care corespund filtrului.</p>
+  }
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

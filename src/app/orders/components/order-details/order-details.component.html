@@ -3,8 +3,18 @@
 @if (order && !isEditing) {
   <div>
     <p><strong>Număr comandă:</strong> {{ order.number }}</p>
-    <p><strong>Firmă client:</strong> {{ order.company.name }}</p>
-    <p><strong>Persoană livrare:</strong> {{ order.deliveryPerson.fullName }}</p>
+    <p>
+      <strong>Firmă client:</strong>
+      <a [routerLink]="['/resources/companies', order.company.id]">
+        {{ order.company.name }}
+      </a>
+    </p>
+    <p>
+      <strong>Persoană livrare:</strong>
+      <a [routerLink]="['/resources/persons', order.deliveryPerson.id]">
+        {{ order.deliveryPerson.fullName }}
+      </a>
+    </p>
     <p><strong>Adresă livrare:</strong> {{ order.address }}</p>
     <p><strong>Status:</strong> {{ order.status.name }}</p>
     <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>

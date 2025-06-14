@@ -12,28 +12,30 @@
     (cancel)="cancelNewTrip()"
   />
 } @else {
-  @if (filteredTrips.length) {
-    <div class="filters-toolbar">
-      <button (click)="addTrip()">+ Adaugă cursă</button>
+  <div class="filters-toolbar">
+    <button (click)="addTrip()">+ Adaugă cursă</button>
 
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        placeholder="Caută după număr, firmă, șofer sau status"
-        class="search-input"
-      />
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după număr, firmă, șofer sau status"
+      class="search-input"
+    />
 
-      <div class="date-filter">
-        <label>De la:</label>
-        <input type="date" [(ngModel)]="filterStartDateFrom" />
-      </div>
-    
-      <div class="date-filter">
-        <label>Până la:</label>
-        <input type="date" [(ngModel)]="filterStartDateTo" />
-      </div>
+    <div class="date-filter">
+      <label>De la:</label>
+      <input type="date" [(ngModel)]="filterStartDateFrom" />
     </div>
 
+    <div class="date-filter">
+      <label>Până la:</label>
+      <input type="date" [(ngModel)]="filterStartDateTo" />
+    </div>
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedTrips.length) {
     <table>
       <thead>
         <tr>
@@ -45,12 +47,24 @@
         </tr>
       </thead>
       <tbody>
-        @for (trip of filteredTrips; track trip) {
+        @for (trip of paginatedTrips; track trip) {
           <tr>
             <td><a [routerLink]="['/trips', trip.id]">{{ trip.number }}</a></td>
-            <td>{{ trip.transportCompany.name }}</td>
+            <td>
+              <a [routerLink]="['/resources/companies', trip.transportCompany.id]">
+                {{ trip.transportCompany.name }}
+              </a>
+            </td>
             <td>{{ trip.startDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-            <td>{{ trip.driver?.fullName || '—' }}</td>
+            <td>
+              @if (trip.driver) {
+                <a [routerLink]="['/resources/persons', trip.driver.id]">
+                  {{ trip.driver.fullName }}
+                </a>
+              } @else {
+                — 
+              }
+            </td>
             <td>{{ trip.status.name }}</td>
           </tr>
         }

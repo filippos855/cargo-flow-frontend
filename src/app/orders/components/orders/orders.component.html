@@ -12,28 +12,30 @@
     (cancel)="cancelNewOrder()"
   />
 } @else {
-  @if (filteredOrders.length) {
-    <div class="filters-toolbar">
-      <button (click)="addOrder()">+ Adaugă comandă</button>
+  <div class="filters-toolbar">
+    <button (click)="addOrder()">+ Adaugă comandă</button>
 
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        placeholder="Caută după număr, firmă, persoană, status, adresă, cursă"
-        class="search-input"
-      />
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Caută după număr, firmă, persoană, status, adresă, cursă"
+      class="search-input"
+    />
 
-      <div class="date-filter">
-        <label>De la:</label>
-        <input type="date" [(ngModel)]="filterStartDate" />
-      </div>
-
-      <div class="date-filter">
-        <label>Până la:</label>
-        <input type="date" [(ngModel)]="filterEndDate" />
-      </div>
+    <div class="date-filter">
+      <label>De la:</label>
+      <input type="date" [(ngModel)]="filterStartDate" />
     </div>
 
+    <div class="date-filter">
+      <label>Până la:</label>
+      <input type="date" [(ngModel)]="filterEndDate" />
+    </div>
+
+    <button (click)="applyFilters()">Caută</button>
+  </div>
+
+  @if (paginatedOrders.length) {
     <table>
       <thead>
         <tr>
@@ -47,11 +49,19 @@
         </tr>
       </thead>
       <tbody>
-        @for (order of filteredOrders; track order) {
+        @for (order of paginatedOrders; track order) {
           <tr>
             <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
-            <td>{{ order.company.name }}</td>
-            <td>{{ order.deliveryPerson.fullName }}</td>
+            <td>
+              <a [routerLink]="['/resources/companies', order.company.id]">
+                {{ order.company.name }}
+              </a>
+            </td>
+            <td>
+              <a [routerLink]="['/resources/persons', order.deliveryPerson.id]">
+                {{ order.deliveryPerson.fullName }}
+              </a>
+            </td>
             <td>{{ order.address }}</td>
             <td>{{ order.status.name }}</td>
             <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
@@ -59,7 +69,7 @@
               @if (order.trip) {
                 <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
               } @else {
-                —
+                — 
               }
             </td>
           </tr>

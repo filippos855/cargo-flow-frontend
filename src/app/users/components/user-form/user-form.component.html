@@ -1,0 +1,64 @@
+<form (ngSubmit)="submitForm()" class="user-form">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      type="text"
+      [(ngModel)]="user.username"
+      name="username"
+      required
+    />
+  </div>
+
+  <div class="form-group" *ngIf="!isEditMode">
+    <label for="password">Parolă</label>
+    <input
+      id="password"
+      type="password"
+      [(ngModel)]="user.passwordHash"
+      name="password"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="person">Persoană</label>
+    <select id="person" [(ngModel)]="user.person" name="person" required>
+      <option [ngValue]="undefined" disabled selected>Selectează persoana</option>
+      @for (p of persons; track p) {
+        <option [ngValue]="p">{{ p.fullName }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="role">Rol</label>
+    <select id="role" [(ngModel)]="user.role" name="role" required>
+      <option [ngValue]="undefined" disabled selected>Selectează rolul</option>
+      @for (r of roles; track r) {
+        <option [ngValue]="r">{{ r.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="isActive">Activ</label>
+    <select id="isActive" [(ngModel)]="user.isActive" name="isActive">
+      <option [ngValue]="true">Da</option>
+      <option [ngValue]="false">Nu</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit">{{ isEditMode ? 'Salvează' : 'Adaugă' }}</button>
+    <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
+  </div>
+</form>
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
+}

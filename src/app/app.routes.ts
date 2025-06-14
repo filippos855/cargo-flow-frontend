@@ -121,7 +121,7 @@ export const routes: Routes = [
               {
                 path: '',
                 loadComponent: () =>
-                  import('./persons/components/persons.component').then(m => m.PersonsComponent)
+                  import('./persons/components/persons/persons.component').then(m => m.PersonsComponent)
               },
               {
                 path: ':id',
@@ -141,7 +141,7 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./users/components/users.component').then(m => m.UsersComponent)
+              import('./users/components/users/users.component').then(m => m.UsersComponent)
           },
           {
             path: ':id',

@@ -1,35 +1,70 @@
 <h2>Detalii utilizator</h2>
 
-@if (user) {
+@if (user && !isEditing) {
   <div>
     <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Persoană:</strong>
-      <a [routerLink]="['/resources/persons', user.person.id]">
+    <p>
+      <strong>Persoană:</strong>
+      <a [routerLink]="['/persons', user.person.id]">
         {{ user.person.fullName }}
       </a>
     </p>
     <p><strong>Rol:</strong> {{ user.role.name }}</p>
     <p><strong>Status:</strong> {{ user.isActive ? 'Activ' : 'Inactiv' }}</p>
 
-    @if (!isEditing) {
-      <button (click)="enableEdit()">Editează</button>
-    }
-
-    @if (isEditing) {
-      <div>
-        <label>
-          Status:
-          <select [(ngModel)]="user.isActive">
-            <option [ngValue]="true">Activ</option>
-            <option [ngValue]="false">Inactiv</option>
-          </select>
-        </label>
-        <br />
-        <button (click)="save()">Salvează</button>
-      </div>
-    }
-
     <br />
-    <button (click)="goBack()">Înapoi</button>
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
   </div>
+}
+
+@if (user && isEditing) {
+  <div class="form-group">
+    <label>
+      Username:
+      <input type="text" [(ngModel)]="user.username" />
+    </label>
+    <label>
+      Rol:
+      <select [(ngModel)]="user.role">
+        <option [ngValue]="undefined">— Selectează rol —</option>
+        <option [ngValue]="{ id: 1, name: 'admin', dictionaryId: 4 }">admin</option>
+        <option [ngValue]="{ id: 2, name: 'operator', dictionaryId: 4 }">operator</option>
+        <option [ngValue]="{ id: 3, name: 'manager flota', dictionaryId: 4 }">manager flota</option>
+        <option [ngValue]="{ id: 4, name: 'financiar', dictionaryId: 4 }">financiar</option>
+      </select>
+    </label>
+    <label>
+      Status:
+      <select [(ngModel)]="user.isActive">
+        <option [ngValue]="true">Activ</option>
+        <option [ngValue]="false">Inactiv</option>
+      </select>
+    </label>
+
+    <div class="actions">
+      <button (click)="save()">Salvează</button>
+      <button (click)="cancelEdit()">Anulează</button>
+    </div>
+  </div>
+}
+
+@if (showDeleteConfirm) {
+  <app-confirm-dialog
+    [title]="'Confirmare ștergere'"
+    [message]="'Ești sigur că vrei să ștergi acest utilizator?'"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  />
+}
+
+@if (showNotification) {
+  <app-notification
+    [message]="notificationMessage"
+    [type]="notificationType"
+    [duration]="3000"
+  />
 }

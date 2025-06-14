@@ -4,9 +4,11 @@ h2 {
   color: #2f3542;
 }
 
-.toolbar {
+.filters-toolbar {
   display: flex;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
   margin-bottom: 1rem;
 
   button {
@@ -21,6 +23,23 @@ h2 {
     &:hover {
       background-color: #0d6efd;
     }
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  .checkbox-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 14px;
   }
 }
 
@@ -42,6 +61,7 @@ table {
     background-color: #f1f2f6;
     font-weight: 600;
     color: #2f3542;
+    cursor: pointer;
   }
 
   td {
@@ -59,5 +79,31 @@ table {
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  button {
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    font-size: 14px;
+    color: #333;
   }
 }

@@ -153,6 +153,10 @@ export class TripService {
     return of(this.mockTrips);
   }
 
+  getTripsSync(): Trip[] {
+  return this.mockTrips;
+  }
+
   getTripById(id: number): Observable<Trip | null> {
     const trip = this.mockTrips.find(t => t.id === id);
     return of(trip ?? null);

@@ -26,6 +26,8 @@ import { DictionaryItem } from '../../../shared/models/dictionary-item.model';
 })
 export class TripsComponent implements OnInit {
   trips: Trip[] = [];
+  filtered: Trip[] = [];
+
   isAdding = false;
   newTrip!: Trip;
 
@@ -36,7 +38,7 @@ export class TripsComponent implements OnInit {
 
   showNotification = false;
   notificationMessage = '';
-  notificationType: 'success' | 'info' |'error' = 'success';
+  notificationType: 'success' | 'info' | 'error' = 'success';
 
   searchTerm = '';
   filterStartDateFrom?: string;
@@ -61,15 +63,16 @@ export class TripsComponent implements OnInit {
   loadTrips(): void {
     this.tripService.getTrips().subscribe(data => {
       this.trips = data;
+      this.applyFilters();
     });
   }
 
-  get filteredTrips(): Trip[] {
+  applyFilters(): void {
     const search = this.searchTerm.toLowerCase();
     const from = this.filterStartDateFrom ? new Date(this.filterStartDateFrom) : null;
     const to = this.filterStartDateTo ? new Date(this.filterStartDateTo) : null;
 
-    const filtered = this.trips.filter(t => {
+    let result = this.trips.filter(t => {
       const matchesSearch =
         t.number.toLowerCase().includes(search) ||
         t.transportCompany.name.toLowerCase().includes(search) ||
@@ -82,26 +85,26 @@ export class TripsComponent implements OnInit {
       return matchesSearch && matchesFrom && matchesTo;
     });
 
-    const sorted = [...filtered].sort((a, b) => {
-      let aVal = this.sortKey === 'driver'
-        ? a.driver?.fullName ?? ''
-        : a[this.sortKey];
-      let bVal = this.sortKey === 'driver'
-        ? b.driver?.fullName ?? ''
-        : b[this.sortKey];
+    result = result.sort((a, b) => {
+      const aVal = this.sortKey === 'driver' ? a.driver?.fullName ?? '' : a[this.sortKey];
+      const bVal = this.sortKey === 'driver' ? b.driver?.fullName ?? '' : b[this.sortKey];
 
       return this.sortDirection === 'asc'
         ? (aVal < bVal ? -1 : aVal > bVal ? 1 : 0)
         : (aVal > bVal ? -1 : aVal < bVal ? 1 : 0);
     });
 
+    this.currentPage = 1;
+    this.filtered = result;
+  }
+
+  get paginatedTrips(): Trip[] {
     const start = (this.currentPage - 1) * this.pageSize;
-    return sorted.slice(start, start + this.pageSize);
+    return this.filtered.slice(start, start + this.pageSize);
   }
 
   get totalPages(): number {
-    const total = this.filteredTrips.length;
-    return Math.ceil(total / this.pageSize);
+    return Math.ceil(this.filtered.length / this.pageSize);
   }
 
   setSort(key: 'number' | 'startDate' | 'driver'): void {
@@ -111,6 +114,7 @@ export class TripsComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
+    this.applyFilters();
   }
 
   changePage(offset: number): void {

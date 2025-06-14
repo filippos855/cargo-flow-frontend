@@ -51,8 +51,9 @@ export class TripDetailsComponent implements OnInit {
   selectedOrderForTrip: any = undefined;
   showOrderSelector = false;
 
-  // 🔍🔢🔁 Căutare, sortare, paginare
+  // 🔍🔢🔁 Căutare, sortare, paginare (manuală)
   searchTerm = '';
+  filtered: any[] = [];
   sortKey: 'number' | 'company' | 'createdDate' = 'createdDate';
   sortDirection: 'asc' | 'desc' = 'asc';
   currentPage = 1;
@@ -78,38 +79,41 @@ export class TripDetailsComponent implements OnInit {
     );
 
     this.trip$.subscribe(trip => {
-      if (trip) this.trip = structuredClone(trip);
+      if (trip) {
+        this.trip = structuredClone(trip);
+        this.applyFilters();
+      }
     });
   }
 
-  get filteredOrders(): any[] {
+  applyFilters(): void {
     const all = this.trip.orders ?? [];
 
-    const filtered = all.filter(order =>
+    let result = all.filter(order =>
       order.number.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       order.company.name.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
 
-    const sorted = [...filtered].sort((a, b) => {
-      let aVal = this.sortKey === 'company' ? a.company.name : a[this.sortKey];
-      let bVal = this.sortKey === 'company' ? b.company.name : b[this.sortKey];
+    result = result.sort((a, b) => {
+      const aVal = this.sortKey === 'company' ? a.company.name : a[this.sortKey];
+      const bVal = this.sortKey === 'company' ? b.company.name : b[this.sortKey];
 
       return this.sortDirection === 'asc'
         ? (aVal < bVal ? -1 : aVal > bVal ? 1 : 0)
         : (aVal > bVal ? -1 : aVal < bVal ? 1 : 0);
     });
 
+    this.currentPage = 1;
+    this.filtered = result;
+  }
+
+  get paginatedOrders(): any[] {
     const start = (this.currentPage - 1) * this.pageSize;
-    return sorted.slice(start, start + this.pageSize);
+    return this.filtered.slice(start, start + this.pageSize);
   }
 
   get totalPages(): number {
-    const total = this.trip.orders?.filter(order =>
-      order.number.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      order.company.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    ).length ?? 0;
-
-    return Math.ceil(total / this.pageSize);
+    return Math.ceil(this.filtered.length / this.pageSize);
   }
 
   setSort(key: 'number' | 'company' | 'createdDate'): void {
@@ -119,6 +123,7 @@ export class TripDetailsComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
+    this.applyFilters();
   }
 
   changePage(offset: number): void {
@@ -217,6 +222,8 @@ export class TripDetailsComponent implements OnInit {
 
     this.selectedOrderForTrip = undefined;
     this.showOrderSelector = false;
+
+    this.applyFilters();
   }
 
   excludeOrder(orderId: number): void {
@@ -245,5 +252,7 @@ export class TripDetailsComponent implements OnInit {
     this.notificationMessage = 'Comanda a fost exclusă din cursă.';
     this.notificationType = 'success';
     this.showNotification = true;
+
+    this.applyFilters();
   }
 }
