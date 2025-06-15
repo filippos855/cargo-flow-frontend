@@ -17,7 +17,7 @@ import { NotificationComponent } from '../../../shared/components/notification/n
 })
 export class CompaniesComponent implements OnInit {
   companies: Company[] = [];
-  filtered: Company[] = [];
+  totalCount = 0;
 
   isAdding = false;
   newCompany!: Company;
@@ -40,29 +40,26 @@ export class CompaniesComponent implements OnInit {
   }
 
   loadCompanies(): void {
-    this.companies = this.companyService.getCompanies();
-    this.applyFilters();
+    this.companyService.getCompanies(
+      this.searchTerm,
+      this.sortKey,
+      this.sortDirection,
+      this.currentPage,
+      this.pageSize
+    ).subscribe({
+      next: (response) => {
+        this.companies = response.items;
+        this.totalCount = response.totalCount;
+      },
+      error: () => {
+        this.showToast('Eroare la încărcarea firmelor.', 'error');
+      }
+    });
   }
 
   applyFilters(): void {
-    const search = this.searchTerm.toLowerCase();
-
-    let result = this.companies.filter(c =>
-      c.name.toLowerCase().includes(search) ||
-      c.code.toLowerCase().includes(search) ||
-      (c.cui || '').toLowerCase().includes(search)
-    );
-
-    result.sort((a, b) => {
-      const aVal = a[this.sortKey] || '';
-      const bVal = b[this.sortKey] || '';
-      return this.sortDirection === 'asc'
-        ? aVal > bVal ? 1 : -1
-        : aVal < bVal ? 1 : -1;
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
+    this.loadCompanies();
   }
 
   setSort(key: keyof Company): void {
@@ -72,23 +69,23 @@ export class CompaniesComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-
-    this.applyFilters();
+    this.loadCompanies();
   }
 
-  get paginatedCompanies(): Company[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
+  getSortIcon(key: keyof Company): string {
+    if (this.sortKey !== key) return '';
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    return Math.ceil(this.totalCount / this.pageSize);
   }
 
   changePage(offset: number): void {
     const next = this.currentPage + offset;
     if (next >= 1 && next <= this.totalPages) {
       this.currentPage = next;
+      this.loadCompanies();
     }
   }
 
@@ -98,23 +95,49 @@ export class CompaniesComponent implements OnInit {
       id: 0,
       name: '',
       code: '',
+      cui: '',
+      address: '',
       contactPerson: { id: 0, fullName: '' }
     };
   }
 
   saveNewCompany(company: Company): void {
-    this.companyService.addCompany(company);
-    this.loadCompanies();
-    this.isAdding = false;
-    this.notificationMessage = 'Firma a fost adăugată.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.companyService.addCompany(company).subscribe({
+      next: () => {
+        this.loadCompanies();
+        this.isAdding = false;
+        this.showToast('Firma a fost adăugată.', 'success');
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.showToast(errorMessage || 'Eroare la adăugare.', 'error');
+      }
+    });
   }
 
   cancelNewCompany(): void {
     this.isAdding = false;
-    this.notificationMessage = 'Adăugarea a fost anulată.';
-    this.notificationType = 'info';
+    this.showToast('Adăugarea a fost anulată.', 'info');
+  }
+
+  showToast(message: string, type: 'success' | 'info' | 'error' = 'info'): void {
+    this.notificationMessage = message;
+    this.notificationType = type;
     this.showNotification = true;
+    setTimeout(() => (this.showNotification = false), 3000);
+  }
+
+  private extractBackendError(error: any): string | null {
+    if (error?.error?.errors) {
+      const errorObj = error.error.errors;
+      const firstKey = Object.keys(errorObj)[0];
+      return errorObj[firstKey]?.[0] || null;
+    }
+
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+
+    return null;
   }
 }

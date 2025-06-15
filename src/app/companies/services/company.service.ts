@@ -1,58 +1,52 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Company } from '../models/company.model';
-import { Person } from '../../persons/models/person.model';
+import { AppConfigService } from '../../core/services/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompanyService {
-  private companies: Company[] = [];
+  private baseUrl: string;
 
-  constructor() {
-    const person1: Person = { id: 1, fullName: 'Popescu Ion' };
-    const person2: Person = { id: 2, fullName: 'Ionescu Maria' };
-
-    this.companies = [
-      {
-        id: 1,
-        name: 'EMAG SRL',
-        code: 'EMAG',
-        cui: 'RO12345678',
-        address: 'București, Str. Exemplu 1',
-        contactPerson: person1
-      },
-      {
-        id: 2,
-        name: 'Altex SA',
-        code: 'ALTEX',
-        address: 'Iași, Bd. Libertății 45',
-        contactPerson: person2
-      }
-    ];
+  constructor(
+    private http: HttpClient,
+    private config: AppConfigService
+  ) {
+    this.baseUrl = `${this.config.apiUrl}/companies`;
   }
 
-  getCompanies(): Company[] {
-    return this.companies;
+  getCompanies(
+    search = '',
+    sort = 'name',
+    direction: 'asc' | 'desc' = 'asc',
+    page = 1,
+    pageSize = 10
+  ): Observable<{ items: Company[]; totalCount: number }> {
+    let params = new HttpParams()
+      .set('search', search)
+      .set('sort', sort)
+      .set('direction', direction)
+      .set('page', page)
+      .set('pageSize', pageSize);
+
+    return this.http.get<{ items: Company[]; totalCount: number }>(this.baseUrl, { params });
   }
 
-  getCompanyById(id: number): Company | undefined {
-    return this.companies.find(c => c.id === id);
+  getCompanyById(id: number): Observable<Company> {
+    return this.http.get<Company>(`${this.baseUrl}/${id}`);
   }
 
-  updateCompany(updated: Company): void {
-    const index = this.companies.findIndex(c => c.id === updated.id);
-    if (index !== -1) {
-      this.companies[index] = { ...updated };
-    }
+  addCompany(company: Company): Observable<Company> {
+    return this.http.post<Company>(this.baseUrl, company);
   }
 
-  addCompany(company: Company): void {
-    const maxId = Math.max(...this.companies.map(c => c.id), 0);
-    company.id = maxId + 1;
-    this.companies.push(company);
+  updateCompany(company: Company): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${company.id}`, company);
   }
 
-  deleteCompanyById(id: number): void {
-    this.companies = this.companies.filter(c => c.id !== id);
+  deleteCompanyById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

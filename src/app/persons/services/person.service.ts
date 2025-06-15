@@ -1,59 +1,52 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Person } from '../models/person.model';
+import { Observable } from 'rxjs';
+import { AppConfigService } from '../../core/services/app-config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonService {
-  private persons: Person[] = [];
+  private baseUrl: string;
 
-  constructor() {
-    this.persons = [
-      {
-        id: 1,
-        fullName: 'Popescu Ion',
-        cnp: '1980101223344',
-        phone: '0712345678',
-        email: 'ion.popescu@example.com'
-      },
-      {
-        id: 2,
-        fullName: 'Ionescu Maria',
-        cnp: '2870508332211',
-        phone: '0722333444',
-        email: 'maria.ionescu@example.com'
-      },
-      {
-        id: 3,
-        fullName: 'Vasile George',
-        cnp: '1950719222111',
-        phone: '0733555666',
-        email: 'george.vasile@example.com'
-      }
-    ];
+  constructor(
+    private http: HttpClient,
+    private config: AppConfigService
+  ) {
+    this.baseUrl = `${this.config.apiUrl}/persons`;
   }
 
-  getPersons(): Person[] {
-    return this.persons;
+  getPersons(
+    search = '',
+    sort = 'fullName',
+    direction: 'asc' | 'desc' = 'asc',
+    page = 1,
+    pageSize = 10
+  ): Observable<{ items: Person[]; totalCount: number }> {
+    let params = new HttpParams()
+      .set('search', search)
+      .set('sort', sort)
+      .set('direction', direction)
+      .set('page', page)
+      .set('pageSize', pageSize);
+
+    return this.http.get<{ items: Person[]; totalCount: number }>(this.baseUrl, { params });
   }
 
-  getPersonById(id: number): Person | undefined {
-    return this.persons.find(p => p.id === id);
+  getPersonById(id: number): Observable<Person> {
+    return this.http.get<Person>(`${this.baseUrl}/${id}`);
   }
 
-  updatePerson(updated: Person): void {
-    const index = this.persons.findIndex(p => p.id === updated.id);
-    if (index !== -1) {
-      this.persons[index] = { ...updated };
-    }
+  addPerson(person: Person): Observable<Person> {
+    return this.http.post<Person>(this.baseUrl, person);
   }
 
-  addPerson(person: Person): void {
-    person.id = Math.floor(Math.random() * 10000);
-    this.persons.push(person);
+  updatePerson(person: Person): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${person.id}`, person);
   }
 
-  deletePersonById(id: number): void {
-    this.persons = this.persons.filter(p => p.id !== id);
+  deletePersonById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

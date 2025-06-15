@@ -16,7 +16,6 @@ import { PersonFormComponent } from '../person-form/person-form.component';
 })
 export class PersonsComponent implements OnInit {
   persons: Person[] = [];
-  filtered: Person[] = [];
   isAdding = false;
   newPerson!: Person;
 
@@ -26,6 +25,7 @@ export class PersonsComponent implements OnInit {
 
   currentPage = 1;
   pageSize = 10;
+  totalCount = 0;
 
   showNotification = false;
   notificationMessage = '';
@@ -41,29 +41,28 @@ export class PersonsComponent implements OnInit {
   }
 
   loadPersons(): void {
-    this.persons = this.personService.getPersons();
-    this.applyFilters();
+    this.personService
+      .getPersons(
+        this.searchTerm,
+        this.sortKey,
+        this.sortDirection,
+        this.currentPage,
+        this.pageSize
+      )
+      .subscribe({
+        next: (response) => {
+          this.persons = response.items;
+          this.totalCount = response.totalCount;
+        },
+        error: () => {
+          this.showToast('Eroare la încărcarea persoanelor.', 'error');
+        }
+      });
   }
 
   applyFilters(): void {
-    const search = this.searchTerm.toLowerCase();
-
-    let result = this.persons.filter(p =>
-      p.fullName.toLowerCase().includes(search) ||
-      p.cnp?.toLowerCase().includes(search)
-    );
-
-    result.sort((a, b) => {
-      const aVal = (a[this.sortKey] ?? '').toString().toLowerCase();
-      const bVal = (b[this.sortKey] ?? '').toString().toLowerCase();
-
-      return this.sortDirection === 'asc'
-        ? aVal > bVal ? 1 : aVal < bVal ? -1 : 0
-        : aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
+    this.loadPersons();
   }
 
   setSort(key: keyof Person): void {
@@ -73,23 +72,18 @@ export class PersonsComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-
-    this.applyFilters();
-  }
-
-  get paginatedPersons(): Person[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
+    this.loadPersons();
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    return Math.ceil(this.totalCount / this.pageSize);
   }
 
   changePage(offset: number): void {
     const next = this.currentPage + offset;
     if (next >= 1 && next <= this.totalPages) {
       this.currentPage = next;
+      this.loadPersons();
     }
   }
 
@@ -105,15 +99,27 @@ export class PersonsComponent implements OnInit {
   }
 
   saveNewPerson(person: Person): void {
-    this.personService.addPerson(person);
-    this.loadPersons();
-    this.isAdding = false;
-    this.showToast('Persoana a fost adăugată.', 'success');
+    this.personService.addPerson(person).subscribe({
+      next: () => {
+        this.loadPersons();
+        this.isAdding = false;
+        this.showToast('Persoana a fost adăugată.', 'success');
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.showToast(errorMessage || 'Eroare la adăugare.', 'error');
+      }
+    });
   }
 
   cancelNewPerson(): void {
     this.isAdding = false;
     this.showToast('Adăugarea persoanei a fost anulată.', 'info');
+  }
+
+  getSortIcon(key: keyof Person): string {
+    if (this.sortKey !== key) return '';
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 
   showToast(message: string, type: 'success' | 'info' | 'error' = 'info'): void {
@@ -125,5 +131,19 @@ export class PersonsComponent implements OnInit {
 
   viewPerson(person: Person): void {
     this.router.navigate(['/resources/persons', person.id]);
+  }
+
+  private extractBackendError(error: any): string | null {
+    if (error?.error?.errors) {
+      const errorObj = error.error.errors;
+      const firstKey = Object.keys(errorObj)[0];
+      return errorObj[firstKey]?.[0] || null;
+    }
+
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+
+    return null;
   }
 }

@@ -1,28 +1,33 @@
 <h2>Detalii firmă</h2>
 
-@if (isEditing) {
+@if (company && !isEditing) {
+  <div>
+    <p><strong>Denumire:</strong> {{ company.name }}</p>
+    <p><strong>Cod:</strong> {{ company.code }}</p>
+    <p><strong>CUI:</strong> {{ company.cui || '—' }}</p>
+    <p><strong>Adresă:</strong> {{ company.address || '—' }}</p>
+    <p><strong>Persoană contact:</strong>
+      <a [routerLink]="['/resources/persons', company.contactPerson.id]">
+        {{ company.contactPerson.fullName }}
+      </a>
+    </p>
+
+    <br />
+    <div class="actions">
+      <button (click)="enableEdit()">Editează</button>
+      <button (click)="requestDelete()">Șterge</button>
+      <button (click)="goBack()">Înapoi</button>
+    </div>
+  </div>
+}
+
+@if (company && isEditing) {
   <app-company-form
     [company]="company"
     [isEditMode]="true"
-    (save)="saveCompany($event)"
+    (save)="save()"
     (cancel)="cancelEdit()"
   />
-} @else if (company) {
-  <p><strong>Denumire:</strong> {{ company.name }}</p>
-  <p><strong>Cod:</strong> {{ company.code }}</p>
-  <p><strong>CUI:</strong> {{ company.cui || '—' }}</p>
-  <p><strong>Adresă:</strong> {{ company.address || '—' }}</p>
-  <p><strong>Persoană contact:</strong>
-    <a [routerLink]="['/resources/persons', company.contactPerson.id]">
-      {{ company.contactPerson.fullName }}
-    </a>
-  </p>
-
-  <div class="actions">
-    <button (click)="enableEdit()">Editează</button>
-    <button (click)="requestDelete()">Șterge</button>
-    <button (click)="goBack()">Înapoi</button>
-  </div>
 }
 
 @if (showDeleteConfirm) {

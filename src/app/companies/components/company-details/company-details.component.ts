@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { Company } from '../../models/company.model';
 import { CompanyService } from '../../services/company.service';
+import { PersonService } from '../../../persons/services/person.service';
 import { CompanyFormComponent } from '../company-form/company-form.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { Person } from '../../../persons/models/person.model';
 
 @Component({
   selector: 'app-company-details',
@@ -25,40 +27,61 @@ export class CompanyDetailsComponent {
   company!: Company;
   isEditing = false;
 
+  showDeleteConfirm = false;
   showNotification = false;
   notificationMessage = '';
-  notificationType: 'success' | 'error' | 'info' = 'success';
-
-  showDeleteConfirm = false;
+  notificationType: 'success' | 'error' = 'success';
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private router: Router,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private personService: PersonService
   ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.companyService.getCompanyById(id);
-    if (found) {
-      this.company = { ...found };
-    } else {
-      this.notificationMessage = 'Firma nu a fost găsită.';
-      this.notificationType = 'error';
-      this.showNotification = true;
-    }
+    this.companyService.getCompanyById(id).subscribe({
+      next: (company) => {
+        this.company = { ...company };
+
+        this.personService.getPersonById(company.contactPerson.id).subscribe(person => {
+          this.company.contactPerson = person;
+        });
+      },
+      error: () => {
+        this.notificationMessage = 'Firma nu a fost găsită.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   enableEdit(): void {
     this.isEditing = true;
   }
 
-  saveCompany(updated: Company): void {
-    this.companyService.updateCompany(updated);
-    this.company = updated;
-    this.isEditing = false;
-    this.notificationMessage = 'Firma a fost actualizată.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+  save(): void {
+    this.companyService.updateCompany(this.company).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.showToast('Firma a fost salvată cu succes.', 'success');
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.showToast(errorMessage || 'Eroare la salvare.', 'error');
+      }
+    });
+  }
+
+  cancelEdit(): void {
+    this.companyService.getCompanyById(this.company.id).subscribe((c) => {
+      this.company = { ...c };
+
+      this.personService.getPersonById(c.contactPerson.id).subscribe(person => {
+        this.company.contactPerson = person;
+      });
+
+      this.isEditing = false;
+    });
   }
 
   requestDelete(): void {
@@ -66,11 +89,16 @@ export class CompanyDetailsComponent {
   }
 
   confirmDelete(): void {
-    this.companyService.deleteCompanyById(this.company.id);
-    this.notificationMessage = 'Firma a fost ștearsă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.companyService.deleteCompanyById(this.company.id).subscribe({
+      next: () => {
+        this.showToast('Firma a fost ștearsă.', 'success');
+        this.goBack();
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.showToast(errorMessage || 'Nu se poate șterge firma.', 'error');
+      }
+    });
   }
 
   cancelDelete(): void {
@@ -81,7 +109,25 @@ export class CompanyDetailsComponent {
     this.location.back();
   }
 
-  cancelEdit(): void {
-    this.isEditing = false;
+  private showToast(message: string, type: 'success' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+    this.showDeleteConfirm = false;
+    setTimeout(() => (this.showNotification = false), 3000);
+  }
+
+  private extractBackendError(error: any): string | null {
+    if (error?.error?.errors) {
+      const errorObj = error.error.errors;
+      const firstKey = Object.keys(errorObj)[0];
+      return errorObj[firstKey]?.[0] || null;
+    }
+
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+
+    return null;
   }
 }

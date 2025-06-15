@@ -1,29 +1,56 @@
 <form (ngSubmit)="submitForm()" class="company-form">
   <div class="form-group">
     <label for="name">Denumire</label>
-    <input id="name" type="text" [(ngModel)]="company.name" name="name" required />
+    <input
+      id="name"
+      type="text"
+      [(ngModel)]="company.name"
+      name="name"
+      required
+    />
   </div>
 
   <div class="form-group">
     <label for="code">Cod firmă</label>
-    <input id="code" type="text" [(ngModel)]="company.code" name="code" required />
+    <input
+      id="code"
+      type="text"
+      [(ngModel)]="company.code"
+      name="code"
+      required
+    />
   </div>
 
   <div class="form-group">
-    <label for="cui">CUI (opțional)</label>
-    <input id="cui" type="text" [(ngModel)]="company.cui" name="cui" />
+    <label for="cui">CUI</label>
+    <input
+      id="cui"
+      type="text"
+      [(ngModel)]="company.cui"
+      name="cui"
+    />
   </div>
 
   <div class="form-group">
-    <label for="address">Adresă (opțional)</label>
-    <input id="address" type="text" [(ngModel)]="company.address" name="address" />
+    <label for="address">Adresă</label>
+    <input
+      id="address"
+      type="text"
+      [(ngModel)]="company.address"
+      name="address"
+    />
   </div>
 
   <div class="form-group">
     <label for="contactPerson">Persoană de contact</label>
-    <select id="contactPerson" [(ngModel)]="company.contactPerson" name="contactPerson" required>
-      <option [ngValue]="undefined" disabled selected>Selectează persoana</option>
-      @for (person of persons; track person) {
+    <select
+      id="contactPerson"
+      name="contactPerson"
+      [(ngModel)]="company.contactPerson"
+      required
+    >
+      <option [ngValue]="undefined" disabled>Selectează o persoană</option>
+      @for (person of persons; track person.id) {
         <option [ngValue]="person">{{ person.fullName }}</option>
       }
     </select>

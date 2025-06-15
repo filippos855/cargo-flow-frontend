@@ -21,18 +21,26 @@
     <button (click)="applyFilters()">Caută</button>
   </div>
 
-  @if (paginatedPersons.length) {
+  @if (persons.length) {
     <table>
       <thead>
         <tr>
-          <th (click)="setSort('fullName')">Nume complet</th>
-          <th (click)="setSort('cnp')">CNP</th>
-          <th (click)="setSort('phone')">Telefon</th>
-          <th (click)="setSort('email')">Email</th>
+          <th (click)="setSort('fullName')">
+            Nume complet {{ getSortIcon('fullName') }}
+          </th>
+          <th (click)="setSort('cnp')">
+            CNP {{ getSortIcon('cnp') }}
+          </th>
+          <th  (click)="setSort('phone')">
+            Telefon {{ getSortIcon('phone') }}
+          </th>
+          <th  (click)="setSort('email')">
+            Email {{ getSortIcon('email') }}
+          </th>
         </tr>
       </thead>
       <tbody>
-        @for (person of paginatedPersons; track person) {
+        @for (person of persons; track person) {
           <tr>
             <td>
               <a [routerLink]="['/resources/persons', person.id]">

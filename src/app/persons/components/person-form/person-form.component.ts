@@ -30,11 +30,7 @@ export class PersonFormComponent {
     }
 
     this.save.emit(this.person);
-    this.notificationMessage = this.isEditMode
-      ? 'Persoana a fost actualizată'
-      : 'Persoana a fost adăugată';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.showNotification = false;
   }
 
   cancelForm(): void {

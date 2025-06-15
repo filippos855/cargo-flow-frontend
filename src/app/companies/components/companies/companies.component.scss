@@ -55,6 +55,11 @@ table {
     font-weight: 600;
     color: #2f3542;
     cursor: pointer;
+
+    span.sort-icon {
+      font-size: 0.9rem;
+      color: #888;
+    }
   }
 
   td {

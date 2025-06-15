@@ -43,30 +43,51 @@ export class PersonDetailsComponent {
     private companyService: CompanyService
   ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.personService.getPersonById(id);
-    if (found) {
-      this.person = { ...found };
-    }
+    this.personService.getPersonById(id).subscribe(p => {
+      this.person = { ...p };
+    });
   }
 
   enableEdit(): void {
     this.isEditing = true;
   }
 
+  private extractBackendError(error: any): string | null {
+    if (error?.error?.errors) {
+      const errorObj = error.error.errors;
+      const firstKey = Object.keys(errorObj)[0];
+      return errorObj[firstKey]?.[0] || null;
+    }
+
+    if (error?.error?.error) {
+      return error.error.error;
+    }
+
+    return null;
+  }
+
   save(): void {
-    this.personService.updatePerson(this.person);
-    this.isEditing = false;
-    this.notificationMessage = 'Persoana a fost salvată cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.personService.updatePerson(this.person).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.notificationMessage = 'Persoana a fost salvată cu succes.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.notificationMessage = errorMessage || 'Eroare la salvare.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   cancelEdit(): void {
-    this.isEditing = false;
-    const refreshed = this.personService.getPersonById(this.person.id);
-    if (refreshed) {
-      this.person = { ...refreshed };
-    }
+    this.personService.getPersonById(this.person.id).subscribe(p => {
+      this.person = { ...p };
+      this.isEditing = false;
+    });
   }
 
   goBack(): void {
@@ -74,36 +95,26 @@ export class PersonDetailsComponent {
   }
 
   requestDelete(): void {
-    const usedInOrder = this.orderService.getOrders().some(o =>
-      o.deliveryPerson.id === this.person.id
-    );
-
-    const usedInTrip = this.tripService.getTripsSync?.().some(t =>
-      t.driver?.id === this.person.id
-    );
-
-    const usedInCompany = this.companyService.getCompanies().some(c =>
-      c.contactPerson.id === this.person.id
-    );
-
-    if (usedInOrder || usedInTrip || usedInCompany) {
-      this.notificationMessage = 'Persoana nu poate fi ștearsă – este utilizată în sistem.';
-      this.notificationType = 'error';
-      this.showNotification = true;
-      return;
-    }
-
     this.showDeleteConfirm = true;
   }
 
   confirmDelete(): void {
-    this.personService.deletePersonById(this.person.id);
-    this.notificationMessage = 'Persoana a fost ștearsă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.personService.deletePersonById(this.person.id).subscribe({
+      next: () => {
+        this.notificationMessage = 'Persoana a fost ștearsă.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.goBack();
+      },
+      error: (err) => {
+        const errorMessage = this.extractBackendError(err);
+        this.notificationMessage = errorMessage || 'Eroare la ștergere.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
-
+  
   cancelDelete(): void {
     this.showDeleteConfirm = false;
   }
