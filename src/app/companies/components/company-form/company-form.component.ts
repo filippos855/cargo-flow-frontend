@@ -62,8 +62,7 @@ export class CompanyFormComponent implements OnInit {
       code: this.company.code,
       cui: this.company.cui,
       address: this.company.address,
-      contactPersonId: this.company.contactPerson.id,
-      ...(isEdit ? { id: this.company.id } : {})
+      contactPerson: this.company.contactPerson,
     };
 
     this.save.emit(payload as any);

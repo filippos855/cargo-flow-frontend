@@ -107,10 +107,12 @@ export class PersonDetailsComponent {
         this.goBack();
       },
       error: (err) => {
+        this.showDeleteConfirm = false;
         const errorMessage = this.extractBackendError(err);
         this.notificationMessage = errorMessage || 'Eroare la ștergere.';
         this.notificationType = 'error';
-        this.showNotification = true;
+        this.showNotification = false;
+        setTimeout(() => (this.showNotification = true), 0);
       }
     });
   }
