@@ -24,9 +24,9 @@ export class OrderService {
     { id: 4, fullName: 'Adrian Vlad' }
   ];
 
-  private statusInitiat: DictionaryItem = { id: 1, name: 'Inițiat', dictionaryId: 1 };
-  private statusInCursa: DictionaryItem = { id: 2, name: 'Inclusă în cursă', dictionaryId: 1 };
-  private statusFinalizata: DictionaryItem = { id: 3, name: 'Finalizată', dictionaryId: 1 };
+  private statusInitiat: DictionaryItem = { id: 1, name: 'Inițiat', dictionary: { id: 1, name:"test" } };
+  private statusInCursa: DictionaryItem = { id: 2, name: 'Inclusă în cursă', dictionary: { id: 1, name:"test" } };
+  private statusFinalizata: DictionaryItem = { id: 3, name: 'Finalizată', dictionary: { id: 1, name:"test" } };
 
   constructor() {
     const company1 = this.mockCompanies[0];
@@ -36,7 +36,7 @@ export class OrderService {
     const tractor: FleetVehicle = {
       id: 10,
       identifier: 'B123XYZ',
-      type: { id: 1, name: 'Tractor', dictionaryId: 3 },
+      type: { id: 1, name: 'Tractor', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date(),
       rcaExpiration: new Date(),
       isAvailable: true
@@ -45,7 +45,7 @@ export class OrderService {
     const trailer: FleetVehicle = {
       id: 11,
       identifier: 'CJ55ABC',
-      type: { id: 2, name: 'Trailer', dictionaryId: 3 },
+      type: { id: 2, name: 'Trailer', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date(),
       rcaExpiration: new Date(),
       isAvailable: true
@@ -56,7 +56,7 @@ export class OrderService {
         id: 101,
         number: 'TRIP2024001',
         startDate: new Date('2025-06-01'),
-        status: { id: 3, name: 'Planificată', dictionaryId: 2 },
+        status: { id: 3, name: 'Planificată', dictionary: { id: 1, name:"test" } },
         transportCompany: company1,
         driver: { id: 5, fullName: 'George Vasile' },
         tractorUnit: tractor,
@@ -67,7 +67,7 @@ export class OrderService {
         id: 102,
         number: 'TRIP2024002',
         startDate: new Date('2025-06-03'),
-        status: { id: 3, name: 'Planificată', dictionaryId: 2 },
+        status: { id: 3, name: 'Planificată', dictionary: { id: 1, name:"test" } },
         transportCompany: company2,
         driver: { id: 6, fullName: 'Raluca Moraru' },
         tractorUnit: tractor,

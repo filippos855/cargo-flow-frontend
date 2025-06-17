@@ -40,10 +40,16 @@ export class FleetDetailsComponent {
     private tripService: TripService
   ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.fleetService.getVehicleById(id);
-    if (found) {
-      this.vehicle = { ...found };
-    }
+    this.fleetService.getVehicleById(id).subscribe({
+      next: (v) => {
+        this.vehicle = { ...v };
+      },
+      error: () => {
+        this.notificationMessage = 'Vehiculul nu a fost găsit.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   enableEdit(): void {
@@ -51,11 +57,19 @@ export class FleetDetailsComponent {
   }
 
   save(): void {
-    this.fleetService.updateVehicle(this.vehicle);
-    this.isEditing = false;
-    this.notificationMessage = 'Vehiculul a fost salvat cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.fleetService.updateVehicle(this.vehicle).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.notificationMessage = 'Vehiculul a fost salvat cu succes.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la salvare.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   goBack(): void {
@@ -63,23 +77,23 @@ export class FleetDetailsComponent {
   }
 
   requestDelete(): void {
-    const used = this.tripService.isVehicleUsedInTrips(this.vehicle.id);
-    if (used) {
-      this.notificationMessage = 'Vehiculul nu poate fi șters – este folosit într-o cursă.';
-      this.notificationType = 'error';
-      this.showNotification = true;
-      return;
-    }
-
     this.showDeleteConfirm = true;
   }
 
   confirmDelete(): void {
-    this.fleetService.deleteVehicleById(this.vehicle.id);
-    this.notificationMessage = 'Vehiculul a fost șters.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.fleetService.deleteVehicleById(this.vehicle.id).subscribe({
+      next: () => {
+        this.notificationMessage = 'Vehiculul a fost șters.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.goBack();
+      },
+      error: (error) => {
+        this.notificationMessage = error.error || 'Eroare la ștergere.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   cancelDelete(): void {
@@ -87,10 +101,11 @@ export class FleetDetailsComponent {
   }
 
   cancelEdit(): void {
-    this.isEditing = false;
-    const refreshed = this.fleetService.getVehicleById(this.vehicle.id);
-    if (refreshed) {
-      this.vehicle = { ...refreshed };
-    }
+    this.fleetService.getVehicleById(this.vehicle.id).subscribe({
+      next: (refreshed) => {
+        this.vehicle = { ...refreshed };
+        this.isEditing = false;
+      }
+    });
   }
 }

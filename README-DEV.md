@@ -174,7 +174,7 @@ src/app/
 * `Company`: `id`, `name`, `code`, `contactPerson`, `cui?`, `address?`
 * `Person`: `id`, `fullName`, `phone?`, `email?`, `cnp?`
 * `FleetVehicle`: `id`, `identifier`, `type`, `itpExpiration`, `rcaExpiration`, `isAvailable`
-* `DictionaryItem`: `id`, `name`, `dictionaryId`
+* `DictionaryItem`: `id`, `name`, `dictionary`
 
 ---
 

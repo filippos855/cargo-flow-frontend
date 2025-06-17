@@ -1,5 +1,7 @@
+import { Dictionary } from "./dictionary.model";
+
 export interface DictionaryItem {
   id: number;
-  dictionaryId: number;
-  name: string; // ex: 'Inițiat', 'Finalizat', 'Tractor', 'Trailer'
+  dictionary: Dictionary;
+  name: string;
 }

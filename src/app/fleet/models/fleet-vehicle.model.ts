@@ -3,7 +3,7 @@ import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 export interface FleetVehicle {
   id: number;
   identifier: string;
-  type: DictionaryItem; // ex: { id: 3, name: 'Tractor', dictionaryId: 3 }
+  type: DictionaryItem;
   itpExpiration: Date;
   rcaExpiration: Date;
   isAvailable: boolean;

@@ -28,7 +28,7 @@ export class InvoiceService {
     const orderStatus: DictionaryItem = {
       id: 2,
       name: 'Inclusă în cursă',
-      dictionaryId: 1
+      dictionary: { id: 1, name:"test" }
     };
 
     const order: Order = {
@@ -44,7 +44,7 @@ export class InvoiceService {
     const tractorUnit: FleetVehicle = {
       id: 10,
       identifier: 'B123XYZ',
-      type: { id: 1, name: 'Tractor', dictionaryId: 3 },
+      type: { id: 1, name: 'Tractor', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date(),
       rcaExpiration: new Date(),
       isAvailable: true
@@ -53,7 +53,7 @@ export class InvoiceService {
     const trailer: FleetVehicle = {
       id: 11,
       identifier: 'CJ55ABC',
-      type: { id: 2, name: 'Trailer', dictionaryId: 3 },
+      type: { id: 2, name: 'Trailer', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date(),
       rcaExpiration: new Date(),
       isAvailable: true
@@ -63,7 +63,7 @@ export class InvoiceService {
       id: 101,
       number: 'TRIP2024001',
       startDate: new Date(),
-      status: { id: 3, name: 'Planificată', dictionaryId: 2 },
+      status: { id: 3, name: 'Planificată', dictionary: { id: 1, name:"test" } },
       transportCompany: company,
       driver,
       tractorUnit,
@@ -73,10 +73,10 @@ export class InvoiceService {
 
     order.trip = trip;
 
-    const typeEmisa: DictionaryItem = { id: 1, name: 'Emisă', dictionaryId: 10 };
-    const typePrimita: DictionaryItem = { id: 2, name: 'Primită', dictionaryId: 10 };
-    const statusNeachitata: DictionaryItem = { id: 1, name: 'Neachitată', dictionaryId: 11 };
-    const statusAchitata: DictionaryItem = { id: 2, name: 'Achitată', dictionaryId: 11 };
+    const typeEmisa: DictionaryItem = { id: 1, name: 'Emisă', dictionary: { id: 1, name:"test" } };
+    const typePrimita: DictionaryItem = { id: 2, name: 'Primită', dictionary: { id: 1, name:"test" } };
+    const statusNeachitata: DictionaryItem = { id: 1, name: 'Neachitată', dictionary: { id: 1, name:"test" } };
+    const statusAchitata: DictionaryItem = { id: 2, name: 'Achitată', dictionary: { id: 1, name:"test" } };
 
     this.invoices = [
       {

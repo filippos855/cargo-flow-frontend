@@ -11,10 +11,10 @@ export class UserService {
 
   constructor() {
     const roles: DictionaryItem[] = [
-      { id: 1, name: 'admin', dictionaryId: 4 },
-      { id: 2, name: 'operator', dictionaryId: 4 },
-      { id: 3, name: 'manager flota', dictionaryId: 4 },
-      { id: 4, name: 'financiar', dictionaryId: 4 }
+      { id: 1, name: 'admin', dictionary: { id: 1, name:"test" } },
+      { id: 2, name: 'operator', dictionary: { id: 1, name:"test" } },
+      { id: 3, name: 'manager flota', dictionary: { id: 1, name:"test" } },
+      { id: 4, name: 'financiar', dictionary: { id: 1, name:"test" } }
     ];
 
     const persons: Person[] = [

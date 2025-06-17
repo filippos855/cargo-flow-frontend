@@ -128,8 +128,8 @@ export class InvoicesComponent implements OnInit {
     this.newInvoice = {
       id: 0,
       number: '',
-      invoiceType: { id: 1, name: 'Emisă', dictionaryId: 10 },
-      status: { id: 1, name: 'Neachitată', dictionaryId: 11 },
+      invoiceType: { id: 1, name: 'Emisă', dictionary: { id: 1, name:"test" } },
+      status: { id: 1, name: 'Neachitată', dictionary: { id: 1, name:"test" } },
       issueDate: new Date(),
       dueDate: new Date(),
       company: { id: 1, name: '', code: '', contactPerson: { id: 1, fullName: '' } },

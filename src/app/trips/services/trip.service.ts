@@ -17,7 +17,7 @@ export class TripService {
       number: 'TRIP001',
       startDate: new Date('2024-06-01'),
       endDate: new Date('2024-06-03'),
-      status: { id: 1, name: 'Finalizat', dictionaryId: 2 },
+      status: { id: 1, name: 'Finalizat', dictionary: { id: 1, name:"test" } },
       transportCompany: {
         id: 1,
         name: 'FastTrans SRL',
@@ -40,7 +40,7 @@ export class TripService {
       tractorUnit: {
         id: 101,
         identifier: 'B-123-TRC',
-        type: { id: 1, name: 'Tractor', dictionaryId: 3 },
+        type: { id: 1, name: 'Tractor', dictionary: { id: 1, name:"test" } },
         itpExpiration: new Date('2025-01-01'),
         rcaExpiration: new Date('2024-12-01'),
         isAvailable: true
@@ -48,7 +48,7 @@ export class TripService {
       trailer: {
         id: 201,
         identifier: 'B-456-RMC',
-        type: { id: 2, name: 'Trailer', dictionaryId: 3 },
+        type: { id: 2, name: 'Trailer', dictionary: { id: 1, name:"test" } },
         itpExpiration: new Date('2025-03-01'),
         rcaExpiration: new Date('2025-02-01'),
         isAvailable: true
@@ -78,7 +78,7 @@ export class TripService {
             email: 'andrei.stancu@emag.ro'
           },
           address: 'Str. Tineretului 15, București',
-          status: { id: 2, name: 'În curs', dictionaryId: 1 },
+          status: { id: 2, name: 'În curs', dictionary: { id: 1, name:"test" } },
           trip: undefined
         }
       ]
@@ -110,7 +110,7 @@ export class TripService {
         email: 'george.simion@altex.ro'
       },
       address: 'Str. Gării 10, București',
-      status: { id: 1, name: 'Creată', dictionaryId: 1 },
+      status: { id: 1, name: 'Creată', dictionary: { id: 1, name:"test" } },
       trip: undefined
     }
   ];
@@ -129,7 +129,7 @@ export class TripService {
     {
       id: 101,
       identifier: 'B-123-TRC',
-      type: { id: 1, name: 'Tractor', dictionaryId: 3 },
+      type: { id: 1, name: 'Tractor', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date('2025-01-01'),
       rcaExpiration: new Date('2024-12-01'),
       isAvailable: true
@@ -137,7 +137,7 @@ export class TripService {
     {
       id: 201,
       identifier: 'B-456-RMC',
-      type: { id: 2, name: 'Trailer', dictionaryId: 3 },
+      type: { id: 2, name: 'Trailer', dictionary: { id: 1, name:"test" } },
       itpExpiration: new Date('2025-03-01'),
       rcaExpiration: new Date('2025-02-01'),
       isAvailable: true
@@ -145,8 +145,8 @@ export class TripService {
   ];
 
   private mockStatuses: DictionaryItem[] = [
-    { id: 1, name: 'Creată', dictionaryId: 2 },
-    { id: 2, name: 'Finalizat', dictionaryId: 2 }
+    { id: 1, name: 'Creată', dictionary: { id: 1, name:"test" } },
+    { id: 2, name: 'Finalizat', dictionary: { id: 1, name:"test" } }
   ];
 
   getTrips(): Observable<Trip[]> {

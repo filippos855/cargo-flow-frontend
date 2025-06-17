@@ -17,7 +17,7 @@ import { FleetFormComponent } from '../fleet-form/fleet-form.component';
 })
 export class FleetComponent implements OnInit {
   fleet: FleetVehicle[] = [];
-  filtered: FleetVehicle[] = [];
+  totalCount = 0;
   isAdding = false;
   newVehicle!: FleetVehicle;
 
@@ -43,50 +43,29 @@ export class FleetComponent implements OnInit {
   }
 
   loadFleet(): void {
-    this.fleet = this.fleetService.getFleet();
-    this.applyFilters();
+    this.fleetService.getFleet(
+      this.searchTerm,
+      this.sortKey,
+      this.sortDirection,
+      this.currentPage,
+      this.pageSize,
+      this.filterItpExpired,
+      this.filterRcaExpired,
+      this.filterAvailable
+    ).subscribe({
+      next: (response) => {
+        this.fleet = response.items;
+        this.totalCount = response.totalCount;
+      },
+      error: () => {
+        this.showToast('Eroare la încărcarea flotei.', 'error');
+      }
+    });
   }
 
   applyFilters(): void {
-    const search = this.searchTerm.toLowerCase();
-    const now = new Date();
-
-    let result = this.fleet.filter(v =>
-      v.identifier.toLowerCase().includes(search) ||
-      v.type.name.toLowerCase().includes(search)
-    );
-
-    if (this.filterItpExpired) {
-      result = result.filter(v => new Date(v.itpExpiration) < now);
-    }
-
-    if (this.filterRcaExpired) {
-      result = result.filter(v => new Date(v.rcaExpiration) < now);
-    }
-
-    if (this.filterAvailable) {
-      result = result.filter(v => v.isAvailable);
-    }
-
-    result.sort((a, b) => {
-      let aVal: any;
-      let bVal: any;
-
-      if (this.sortKey === 'type') {
-        aVal = a.type.name;
-        bVal = b.type.name;
-      } else {
-        aVal = a[this.sortKey];
-        bVal = b[this.sortKey];
-      }
-
-      return this.sortDirection === 'asc'
-        ? aVal > bVal ? 1 : aVal < bVal ? -1 : 0
-        : aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
+    this.loadFleet();
   }
 
   setSort(key: keyof FleetVehicle | 'type'): void {
@@ -96,23 +75,18 @@ export class FleetComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-
-    this.applyFilters();
-  }
-
-  get paginatedFleet(): FleetVehicle[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
+    this.loadFleet();
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    return Math.ceil(this.totalCount / this.pageSize);
   }
 
   changePage(offset: number): void {
     const nextPage = this.currentPage + offset;
     if (nextPage >= 1 && nextPage <= this.totalPages) {
       this.currentPage = nextPage;
+      this.loadFleet();
     }
   }
 
@@ -129,18 +103,27 @@ export class FleetComponent implements OnInit {
   }
 
   saveNewVehicle(vehicle: FleetVehicle): void {
-    this.fleetService.addVehicle(vehicle);
-    this.loadFleet();
-    this.isAdding = false;
-    this.showNotification = true;
-    this.notificationMessage = 'Vehiculul a fost adăugat cu succes.';
-    this.notificationType = 'success';
+    this.fleetService.addVehicle(vehicle).subscribe({
+      next: () => {
+        this.loadFleet();
+        this.isAdding = false;
+        this.showToast('Vehiculul a fost adăugat.', 'success');
+      },
+      error: () => {
+        this.showToast('Eroare la adăugare.', 'error');
+      }
+    });
   }
 
   cancelNewVehicle(): void {
     this.isAdding = false;
+    this.showToast('Adăugarea a fost anulată.', 'info');
+  }
+
+  private showToast(message: string, type: 'success' | 'info' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
     this.showNotification = true;
-    this.notificationMessage = 'Adăugarea vehiculului a fost anulată.';
-    this.notificationType = 'info';
+    setTimeout(() => (this.showNotification = false), 3000);
   }
 }

@@ -31,21 +31,21 @@ export class InvoiceFormComponent {
   ];
 
   orders: Order[] = [
-    { id: 1, number: 'EMAG001', createdDate: new Date(), company: this.companies[0], deliveryPerson: { id: 3, fullName: 'Livrator 1' }, address: 'București', status: { id: 1, name: 'Creată', dictionaryId: 1 } }
+    { id: 1, number: 'EMAG001', createdDate: new Date(), company: this.companies[0], deliveryPerson: { id: 3, fullName: 'Livrator 1' }, address: 'București', status: { id: 1, name: 'Creată', dictionary: { id: 1, name:"test" } } }
   ];
 
   trips: Trip[] = [
-    { id: 1, number: 'TRIP001', startDate: new Date(), status: { id: 2, name: 'Planificată', dictionaryId: 2 }, transportCompany: this.companies[1] }
+    { id: 1, number: 'TRIP001', startDate: new Date(), status: { id: 2, name: 'Planificată', dictionary: { id: 1, name:"test" } }, transportCompany: this.companies[1] }
   ];
 
   invoiceTypes: DictionaryItem[] = [
-    { id: 1, name: 'Emisă', dictionaryId: 10 },
-    { id: 2, name: 'Primită', dictionaryId: 10 }
+    { id: 1, name: 'Emisă', dictionary: { id: 1, name:"test" } },
+    { id: 2, name: 'Primită', dictionary: { id: 1, name:"test" } }
   ];
 
   statuses: DictionaryItem[] = [
-    { id: 1, name: 'Neachitată', dictionaryId: 11 },
-    { id: 2, name: 'Achitată', dictionaryId: 11 }
+    { id: 1, name: 'Neachitată', dictionary: { id: 1, name:"test" } },
+    { id: 2, name: 'Achitată', dictionary: { id: 1, name:"test" } }
   ];
 
   submitForm(): void {
