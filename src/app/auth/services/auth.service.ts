@@ -1,43 +1,52 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { AppConfigService } from '../../core/services/app-config.service';
 import { User } from '../../users/models/user.model';
-import { UserService } from '../../users/services/user.service';
+import { Observable, of, tap, catchError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private currentUser: User | null = null;
+  private readonly storageKey = 'currentUser';
 
-  constructor(private userService: UserService, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private config: AppConfigService,
+    private router: Router
+  ) {
     const storedUser =
-      localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+      localStorage.getItem(this.storageKey) || sessionStorage.getItem(this.storageKey);
     if (storedUser) {
       this.currentUser = JSON.parse(storedUser);
     }
   }
 
-  login(username: string, password: string, remember: boolean): boolean {
-    const users = this.userService.getUsers();
-    const user = users.find(u => u.username === username && u.passwordHash === password);
-    if (user) {
-      this.currentUser = user;
+  login(username: string, password: string, remember: boolean): Observable<boolean> {
+    return this.http.post<User>(`${this.config.apiUrl}/auth/login`, {
+      username,
+      password
+    }).pipe(
+      tap(user => {
+        this.currentUser = user;
 
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem('currentUser', JSON.stringify(user));
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem(this.storageKey, JSON.stringify(user));
 
-      const otherStorage = remember ? sessionStorage : localStorage;
-      otherStorage.removeItem('currentUser');
-
-      return true;
-    }
-    return false;
+        const otherStorage = remember ? sessionStorage : localStorage;
+        otherStorage.removeItem(this.storageKey);
+      }),
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
   logout(): void {
     this.currentUser = null;
-    localStorage.removeItem('currentUser');
-    sessionStorage.removeItem('currentUser');
+    localStorage.removeItem(this.storageKey);
+    sessionStorage.removeItem(this.storageKey);
     this.router.navigate(['/login']);
   }
 

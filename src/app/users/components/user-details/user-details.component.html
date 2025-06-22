@@ -22,34 +22,12 @@
 }
 
 @if (user && isEditing) {
-  <div class="form-group">
-    <label>
-      Username:
-      <input type="text" [(ngModel)]="user.username" />
-    </label>
-    <label>
-      Rol:
-      <select [(ngModel)]="user.role">
-        <option [ngValue]="undefined">— Selectează rol —</option>
-        <option [ngValue]="{ id: 1, name: 'admin', dictionaryId: 4 }">admin</option>
-        <option [ngValue]="{ id: 2, name: 'operator', dictionaryId: 4 }">operator</option>
-        <option [ngValue]="{ id: 3, name: 'manager flota', dictionaryId: 4 }">manager flota</option>
-        <option [ngValue]="{ id: 4, name: 'financiar', dictionaryId: 4 }">financiar</option>
-      </select>
-    </label>
-    <label>
-      Status:
-      <select [(ngModel)]="user.isActive">
-        <option [ngValue]="true">Activ</option>
-        <option [ngValue]="false">Inactiv</option>
-      </select>
-    </label>
-
-    <div class="actions">
-      <button (click)="save()">Salvează</button>
-      <button (click)="cancelEdit()">Anulează</button>
-    </div>
-  </div>
+  <app-user-form
+    [user]="user"
+    [isEditMode]="true"
+    (save)="save()"
+    (cancel)="cancelEdit()"
+  />
 }
 
 @if (showDeleteConfirm) {

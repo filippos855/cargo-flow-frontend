@@ -4,7 +4,7 @@ import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 export interface User {
   id: number;
   username: string;
-  passwordHash: string;
+  password: string;
   role: DictionaryItem;
   person: Person;
   isActive: boolean;

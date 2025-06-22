@@ -26,7 +26,7 @@
     <button (click)="applyFilters()">Caută</button>
   </div>
 
-  @if (paginatedUsers.length) {
+  @if (users.length) {
     <table>
       <thead>
         <tr>
@@ -37,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (user of paginatedUsers; track user) {
+        @for (user of users; track user) {
           <tr>
             <td><a [routerLink]="['/users', user.id]">{{ user.username }}</a></td>
             <td>

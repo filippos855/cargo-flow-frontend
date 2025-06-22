@@ -170,7 +170,7 @@ src/app/
 * `Order`: `id`, `number`, `createdDate`, `company`, `deliveryPerson`, `address`, `status`, `trip?`
 * `Trip`: `id`, `number`, `startDate`, `endDate?`, `status`, `transportCompany`, `driver?`, `tractorUnit?`, `trailer?`, `orders?`
 * `Invoice`: `id`, `number`, `invoiceType`, `status`, `issueDate`, `dueDate`, `company`, `amount`, `currency`, `order?`, `trip?`
-* `User`: `id`, `username`, `passwordHash`, `person: Person`, `role: DictionaryItem`, `isActive`
+* `User`: `id`, `username`, `password`, `person: Person`, `role: DictionaryItem`, `isActive`
 * `Company`: `id`, `name`, `code`, `contactPerson`, `cui?`, `address?`
 * `Person`: `id`, `fullName`, `phone?`, `email?`, `cnp?`
 * `FleetVehicle`: `id`, `identifier`, `type`, `itpExpiration`, `rcaExpiration`, `isAvailable`

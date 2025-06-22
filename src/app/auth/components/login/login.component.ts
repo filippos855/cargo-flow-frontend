@@ -25,12 +25,13 @@ export class LoginComponent {
   }
 
   login(): void {
-    const success = this.authService.login(this.username, this.password, this.rememberMe);
-    if (success) {
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.error = 'Nume de utilizator sau parolă incorectă.';
-    }
+    this.authService.login(this.username, this.password, this.rememberMe).subscribe(success => {
+      if (success) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.error = 'Nume de utilizator sau parolă incorectă.';
+      }
+    });
   }
 
   togglePassword(): void {

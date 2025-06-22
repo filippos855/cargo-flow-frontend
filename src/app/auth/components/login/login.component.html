@@ -18,7 +18,7 @@
             required
           />
           <button type="button" class="toggle-btn" (click)="togglePassword()" tabindex="-1">
-            {{ showPassword ? '🙈' : '👁️' }}
+            <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
           </button>
         </div>
       </label>

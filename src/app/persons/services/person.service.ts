@@ -34,6 +34,10 @@ export class PersonService {
     return this.http.get<{ items: Person[]; totalCount: number }>(this.baseUrl, { params });
   }
 
+  getAllPersons(): Observable<Person[]> {
+    return this.http.get<Person[]>(`${this.baseUrl}/all`);
+  } 
+
   getPersonById(id: number): Observable<Person> {
     return this.http.get<Person>(`${this.baseUrl}/${id}`);
   }

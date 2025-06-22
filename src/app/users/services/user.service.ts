@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
+import { AppConfigService } from '../../core/services/app-config.service';
 import { Person } from '../../persons/models/person.model';
 import { DictionaryItem } from '../../shared/models/dictionary-item.model';
 
@@ -7,80 +10,63 @@ import { DictionaryItem } from '../../shared/models/dictionary-item.model';
   providedIn: 'root'
 })
 export class UserService {
-  private users: User[] = [];
+  private baseUrl: string;
 
-  constructor() {
-    const roles: DictionaryItem[] = [
-      { id: 1, name: 'admin', dictionary: { id: 1, name:"test" } },
-      { id: 2, name: 'operator', dictionary: { id: 1, name:"test" } },
-      { id: 3, name: 'manager flota', dictionary: { id: 1, name:"test" } },
-      { id: 4, name: 'financiar', dictionary: { id: 1, name:"test" } }
-    ];
-
-    const persons: Person[] = [
-      { id: 1, fullName: 'Andrei Admin', email: 'admin@example.com', phone: '0711111111' },
-      { id: 2, fullName: 'Olivia Operator', email: 'operator@example.com', phone: '0722222222' },
-      { id: 3, fullName: 'Mihai Manager', email: 'manager@example.com', phone: '0733333333' },
-      { id: 4, fullName: 'Claudia Financiar', email: 'financiar@example.com', phone: '0744444444' }
-    ];
-
-    this.users = [
-      {
-        id: 1,
-        username: 'admin',
-        passwordHash: 'admin123',
-        role: roles[0],
-        person: persons[0],
-        isActive: true
-      },
-      {
-        id: 2,
-        username: 'operator',
-        passwordHash: 'operator123',
-        role: roles[1],
-        person: persons[1],
-        isActive: true
-      },
-      {
-        id: 3,
-        username: 'manager',
-        passwordHash: 'manager123',
-        role: roles[2],
-        person: persons[2],
-        isActive: true
-      },
-      {
-        id: 4,
-        username: 'financiar',
-        passwordHash: 'financiar123',
-        role: roles[3],
-        person: persons[3],
-        isActive: true
-      }
-    ];
+  constructor(
+    private http: HttpClient,
+    private config: AppConfigService
+  ) {
+    this.baseUrl = `${this.config.apiUrl}/users`;
   }
 
-  getUsers(): User[] {
-    return this.users;
-  }
+  getUsers(
+    search = '',
+    sort = 'username',
+    direction: 'asc' | 'desc' = 'asc',
+    page = 1,
+    pageSize = 10,
+    isActive?: boolean
+  ): Observable<{ items: User[]; totalCount: number }> {
+    let params = new HttpParams()
+      .set('search', search)
+      .set('sort', sort)
+      .set('direction', direction)
+      .set('page', page)
+      .set('pageSize', pageSize);
 
-  getUserById(id: number): User | undefined {
-    return this.users.find(u => u.id === id);
-  }
-
-  updateUser(updated: User): void {
-    const index = this.users.findIndex(u => u.id === updated.id);
-    if (index !== -1) {
-      this.users[index] = { ...updated };
+    if (isActive !== undefined) {
+      params = params.set('isActive', isActive ? 'true' : 'false');
     }
+
+    return this.http.get<{ items: User[]; totalCount: number }>(this.baseUrl, { params });
   }
 
-  addUser(user: User): void {
-    user.id = Math.floor(Math.random() * 10000);
-    this.users.push(user);
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/${id}`);
   }
 
-  deleteUserById(id: number): void {
-    this.users = this.users.filter(u => u.id !== id);
+  addUser(user: {
+    username: string;
+    password: string;
+    role: DictionaryItem;
+    person: Person;
+    isActive: boolean;
+  }): Observable<User> {
+    return this.http.post<User>(this.baseUrl, user);
+  }
+
+  updateUser(user: {
+    id: number;
+    username: string;
+    password?: string;
+    role: DictionaryItem;
+    person: Person;
+    isActive: boolean;
+  }): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${user.id}`, user);
+  }
+
+  deleteUserById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

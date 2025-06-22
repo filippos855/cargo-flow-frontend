@@ -8,6 +8,7 @@ import { UserService } from '../../services/user.service';
 
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-user-details',
@@ -17,7 +18,8 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
     FormsModule,
     RouterModule,
     NotificationComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    UserFormComponent
   ],
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss']
@@ -38,10 +40,18 @@ export class UserDetailsComponent {
     private userService: UserService
   ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.userService.getUserById(id);
-    if (found) {
-      this.user = { ...found };
-    }
+    this.loadUser(id);
+  }
+
+  loadUser(id: number): void {
+    this.userService.getUserById(id).subscribe({
+      next: (u) => {
+        this.user = { ...u, password: '' };  // password gol la editare — perfect
+      },
+      error: () => {
+        this.showToast('Utilizatorul nu a fost găsit.', 'error');
+      }
+    });
   }
 
   enableEdit(): void {
@@ -49,11 +59,23 @@ export class UserDetailsComponent {
   }
 
   save(): void {
-    this.userService.updateUser(this.user);
-    this.isEditing = false;
-    this.notificationMessage = 'Utilizatorul a fost salvat cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.userService.updateUser({
+      id: this.user.id,
+      username: this.user.username,
+      password: this.user.password,
+      role: this.user.role,
+      person: this.user.person,
+      isActive: this.user.isActive
+    }).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.showToast('Utilizatorul a fost salvat cu succes.', 'success');
+        this.loadUser(this.user.id);
+      },
+      error: () => {
+        this.showToast('Eroare la salvare.', 'error');
+      }
+    });
   }
 
   goBack(): void {
@@ -65,11 +87,15 @@ export class UserDetailsComponent {
   }
 
   confirmDelete(): void {
-    this.userService.deleteUserById(this.user.id);
-    this.notificationMessage = 'Utilizatorul a fost șters.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.userService.deleteUserById(this.user.id).subscribe({
+      next: () => {
+        this.showToast('Utilizatorul a fost șters.', 'success');
+        this.goBack();
+      },
+      error: (error) => {
+        this.showToast(error.error || 'Eroare la ștergere.', 'error');
+      }
+    });
   }
 
   cancelDelete(): void {
@@ -78,9 +104,13 @@ export class UserDetailsComponent {
 
   cancelEdit(): void {
     this.isEditing = false;
-    const refreshed = this.userService.getUserById(this.user.id);
-    if (refreshed) {
-      this.user = { ...refreshed };
-    }
+    this.loadUser(this.user.id);
+  }
+
+  private showToast(message: string, type: 'success' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+    setTimeout(() => (this.showNotification = false), 3000);
   }
 }
