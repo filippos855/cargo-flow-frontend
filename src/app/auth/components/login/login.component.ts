@@ -25,11 +25,18 @@ export class LoginComponent {
   }
 
   login(): void {
-    this.authService.login(this.username, this.password, this.rememberMe).subscribe(success => {
-      if (success) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.error = 'Nume de utilizator sau parolă incorectă.';
+    this.authService.login(this.username, this.password, this.rememberMe).subscribe({
+      next: success => {
+        if (success) {
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error: err => {
+        if (err.status === 401 && err.error) {
+          this.error = err.error;
+        } else {
+          this.error = 'A apărut o eroare. Vă rugăm încercați din nou.';
+        }
       }
     });
   }

@@ -2,124 +2,67 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
-import { OrderFormComponent } from '../order-form/order-form.component';
-import { Company } from '../../../companies/models/company.model';
-import { Person } from '../../../persons/models/person.model';
-import { DictionaryItem } from '../../../shared/models/dictionary-item.model';
-import { Trip } from '../../../trips/models/trip.model';
+import { Order } from '../../models/order.model';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { OrderFormComponent } from '../order-form/order-form.component';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    OrderFormComponent,
-    NotificationComponent
-  ],
+  imports: [CommonModule, RouterModule, FormsModule, NotificationComponent, OrderFormComponent],
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.scss']
 })
 export class OrdersComponent implements OnInit {
   orders: Order[] = [];
-  filtered: Order[] = [];
+  totalCount = 0;
   isAdding = false;
-
-  newOrder: Order = {
-    id: 0,
-    number: '',
-    createdDate: new Date(),
-    company: {} as Company,
-    deliveryPerson: {} as Person,
-    address: '',
-    status: {} as DictionaryItem,
-    trip: undefined
-  };
-
-  companies: Company[] = [];
-  persons: Person[] = [];
-  statuses: DictionaryItem[] = [];
-  trips: Trip[] = [];
-
-  showNotification = false;
-  notificationMessage = '';
-  notificationType: 'success' | 'error' | 'info' = 'info';
+  newOrder!: Order;
 
   searchTerm = '';
   filterStartDate?: string;
   filterEndDate?: string;
 
+  currentPage = 1;
+  pageSize = 10;
+
   sortKey: 'number' | 'company' | 'deliveryPerson' | 'status' | 'createdDate' = 'createdDate';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  currentPage = 1;
-  pageSize = 20;
+  showNotification = false;
+  notificationMessage = '';
+  notificationType: 'success' | 'info' | 'error' = 'success';
 
   constructor(private orderService: OrderService) {}
 
   ngOnInit(): void {
-    this.refreshData();
+    this.loadOrders();
   }
 
-  refreshData(): void {
-    this.orders = this.orderService.getOrders();
-    this.companies = this.orderService.getMockCompanies();
-    this.persons = this.orderService.getMockPersons();
-    this.statuses = this.orderService.getMockStatuses();
-    this.trips = this.orderService.getMockTrips();
-    this.applyFilters();
+  loadOrders(): void {
+    this.orderService.getOrders(
+      this.searchTerm,
+      this.sortKey,
+      this.sortDirection,
+      this.currentPage,
+      this.pageSize,
+      this.filterStartDate,
+      this.filterEndDate
+    ).subscribe({
+      next: (response) => {
+        this.orders = response.items;
+        this.totalCount = response.totalCount;
+      },
+      error: () => {
+        this.showToast('Eroare la încărcarea comenzilor.', 'error');
+      }
+    });
   }
 
   applyFilters(): void {
-    let result = this.orders;
-
-    const search = this.searchTerm.toLowerCase();
-    if (search) {
-      result = result.filter(order =>
-        order.number.toLowerCase().includes(search) ||
-        order.company.name.toLowerCase().includes(search) ||
-        order.deliveryPerson.fullName.toLowerCase().includes(search) ||
-        order.status.name.toLowerCase().includes(search) ||
-        order.address.toLowerCase().includes(search) ||
-        order.trip?.number?.toLowerCase().includes(search)
-      );
-    }
-
-    if (this.filterStartDate) {
-      const start = new Date(this.filterStartDate);
-      result = result.filter(order => new Date(order.createdDate) >= start);
-    }
-
-    if (this.filterEndDate) {
-      const end = new Date(this.filterEndDate);
-      result = result.filter(order => new Date(order.createdDate) <= end);
-    }
-
-    result.sort((a, b) => {
-      const aVal = this.getSortValue(a);
-      const bVal = this.getSortValue(b);
-      return this.sortDirection === 'asc'
-        ? aVal < bVal ? -1 : aVal > bVal ? 1 : 0
-        : aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
-  }
-
-  getSortValue(order: Order): any {
-    switch (this.sortKey) {
-      case 'company': return order.company.name;
-      case 'deliveryPerson': return order.deliveryPerson.fullName;
-      case 'status': return order.status.name;
-      case 'createdDate': return order.createdDate;
-      default: return order[this.sortKey];
-    }
+    this.loadOrders();
   }
 
   setSort(key: 'number' | 'company' | 'deliveryPerson' | 'status' | 'createdDate'): void {
@@ -129,48 +72,37 @@ export class OrdersComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-    this.applyFilters();
-  }
-
-  changePage(offset: number): void {
-    const next = this.currentPage + offset;
-    if (next >= 1 && next <= this.totalPages) {
-      this.currentPage = next;
-    }
-  }
-
-  get paginatedOrders(): Order[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
+    this.loadOrders();
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
+  changePage(offset: number): void {
+    const nextPage = this.currentPage + offset;
+    if (nextPage >= 1 && nextPage <= this.totalPages) {
+      this.currentPage = nextPage;
+      this.loadOrders();
+    }
   }
 
   addOrder(): void {
-    this.newOrder = {
-      id: 0,
-      number: '',
-      createdDate: new Date(),
-      company: {} as Company,
-      deliveryPerson: {} as Person,
-      address: '',
-      status: {} as DictionaryItem,
-      trip: undefined
-    };
     this.isAdding = true;
+    this.newOrder = {} as Order;
   }
 
   saveNewOrder(order: Order): void {
-    const prefix = order.company?.code ?? 'ORD';
-    const count = this.orders.filter(o => o.company.code === prefix).length + 1;
-    order.number = `${prefix}${count}`;
-
-    this.orderService.createOrder(order);
-    this.isAdding = false;
-    this.refreshData();
-    this.showToast('Comanda a fost adăugată.', 'success');
+    this.orderService.createOrder(order).subscribe({
+      next: () => {
+        this.loadOrders();
+        this.isAdding = false;
+        this.showToast('Comanda a fost adăugată.', 'success');
+      },
+      error: () => {
+        this.showToast('Eroare la adăugare.', 'error');
+      }
+    });
   }
 
   cancelNewOrder(): void {
@@ -178,7 +110,7 @@ export class OrdersComponent implements OnInit {
     this.showToast('Adăugarea comenzii a fost anulată.', 'info');
   }
 
-  showToast(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+  private showToast(message: string, type: 'success' | 'info' | 'error') {
     this.notificationMessage = message;
     this.notificationType = type;
     this.showNotification = true;

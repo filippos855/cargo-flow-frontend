@@ -46,7 +46,7 @@ export class UserDetailsComponent {
   loadUser(id: number): void {
     this.userService.getUserById(id).subscribe({
       next: (u) => {
-        this.user = { ...u, password: '' };  // password gol la editare — perfect
+        this.user = { ...u, password: '' };
       },
       error: () => {
         this.showToast('Utilizatorul nu a fost găsit.', 'error');

@@ -19,7 +19,7 @@
           {{ trip.driver.fullName }}
         </a>
       } @else {
-        — 
+        —
       }
     </p>
     <p>
@@ -29,7 +29,7 @@
           {{ trip.tractorUnit.identifier }}
         </a>
       } @else {
-        — 
+        —
       }
     </p>
     <p>
@@ -39,7 +39,7 @@
           {{ trip.trailer.identifier }}
         </a>
       } @else {
-        — 
+        —
       }
     </p>
 
@@ -121,10 +121,6 @@
 @if (trip && isEditing) {
   <app-trip-form
     [trip]="trip"
-    [companies]="companies"
-    [persons]="persons"
-    [vehicles]="vehicles"
-    [statuses]="statuses"
     [isEditMode]="true"
     (save)="save()"
     (cancel)="cancel()"

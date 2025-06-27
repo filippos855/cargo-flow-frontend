@@ -17,7 +17,7 @@ import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
 })
 export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
-  filtered: Invoice[] = [];
+  totalCount = 0;
 
   isAdding = false;
   newInvoice!: Invoice;
@@ -26,7 +26,7 @@ export class InvoicesComponent implements OnInit {
   filterStartDateFrom?: string;
   filterStartDateTo?: string;
 
-  sortKey: keyof Invoice | 'company' | 'order' | 'trip' = 'issueDate';
+  sortKey: string = 'issueDate';
   sortDirection: 'asc' | 'desc' = 'desc';
 
   currentPage = 1;
@@ -43,108 +43,74 @@ export class InvoicesComponent implements OnInit {
   }
 
   loadInvoices(): void {
-    this.invoices = this.invoiceService.getInvoices();
-    this.applyFilters();
+    this.invoiceService.getInvoices(
+    this.searchTerm,
+    this.sortKey,
+    this.sortDirection,
+    this.currentPage,
+    this.pageSize,
+    this.filterStartDateFrom,
+    this.filterStartDateTo
+  ).subscribe({
+      next: res => {
+        this.invoices = res.items;
+        this.totalCount = res.totalCount;
+      },
+      error: err => {
+        this.notificationMessage = 'Eroare la încărcarea facturilor!';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   applyFilters(): void {
-    const search = this.searchTerm.toLowerCase();
-    const from = this.filterStartDateFrom ? new Date(this.filterStartDateFrom) : null;
-    const to = this.filterStartDateTo ? new Date(this.filterStartDateTo) : null;
-
-    let result = this.invoices.filter(i => {
-      const matchSearch =
-        i.number.toLowerCase().includes(search) ||
-        i.company.name.toLowerCase().includes(search) ||
-        i.order?.number?.toLowerCase().includes(search) ||
-        i.trip?.number?.toLowerCase().includes(search);
-
-      const matchFrom = !from || new Date(i.issueDate) >= from;
-      const matchTo = !to || new Date(i.issueDate) <= to;
-
-      return matchSearch && matchFrom && matchTo;
-    });
-
-    result.sort((a, b) => {
-      let aVal: any;
-      let bVal: any;
-
-      switch (this.sortKey) {
-        case 'company':
-          aVal = a.company.name;
-          bVal = b.company.name;
-          break;
-        case 'order':
-          aVal = a.order?.number || '';
-          bVal = b.order?.number || '';
-          break;
-        case 'trip':
-          aVal = a.trip?.number || '';
-          bVal = b.trip?.number || '';
-          break;
-        default:
-          aVal = a[this.sortKey];
-          bVal = b[this.sortKey];
-      }
-
-      return this.sortDirection === 'asc'
-        ? aVal > bVal ? 1 : aVal < bVal ? -1 : 0
-        : aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
+    this.loadInvoices();
   }
 
-  setSort(key: keyof Invoice | 'company' | 'order' | 'trip'): void {
+  setSort(key: string): void {
     if (this.sortKey === key) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-
-    this.applyFilters();
-  }
-
-  get paginatedInvoices(): Invoice[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
+    this.loadInvoices();
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    return Math.ceil(this.totalCount / this.pageSize);
   }
 
   changePage(offset: number): void {
     const next = this.currentPage + offset;
     if (next >= 1 && next <= this.totalPages) {
       this.currentPage = next;
+      this.loadInvoices();
     }
   }
 
   addInvoice(): void {
     this.isAdding = true;
-    this.newInvoice = {
-      id: 0,
-      number: '',
-      invoiceType: { id: 1, name: 'Emisă', dictionary: { id: 1, name:"test" } },
-      status: { id: 1, name: 'Neachitată', dictionary: { id: 1, name:"test" } },
-      issueDate: new Date(),
-      dueDate: new Date(),
-      company: { id: 1, name: '', code: '', contactPerson: { id: 1, fullName: '' } },
-      amount: 0,
-      currency: 'RON'
-    };
+    this.newInvoice = {} as Invoice;
   }
 
   saveNewInvoice(invoice: Invoice): void {
-    this.invoiceService.addInvoice(invoice);
-    this.loadInvoices();
-    this.isAdding = false;
-    this.notificationMessage = 'Factura a fost adăugată.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.invoiceService.addInvoice(invoice).subscribe({
+      next: () => {
+        this.isAdding = false;
+        this.notificationMessage = 'Factura a fost adăugată.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.loadInvoices();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la adăugarea facturii!';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   cancelNewInvoice(): void {
@@ -152,5 +118,9 @@ export class InvoicesComponent implements OnInit {
     this.notificationMessage = 'Adăugarea facturii a fost anulată.';
     this.notificationType = 'info';
     this.showNotification = true;
+  }
+
+  get paginatedInvoices(): Invoice[] {
+    return this.invoices;
   }
 }

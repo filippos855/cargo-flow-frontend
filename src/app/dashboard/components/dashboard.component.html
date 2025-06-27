@@ -1,38 +1,36 @@
 <h2>Dashboard</h2>
 
-<div class="dashboard-cards">
-  <!-- Comenzi -->
-  <div class="card">
-    <h3>Total Comenzi</h3>
-    <p>128</p>
+@if (isLoading) {
+  <div>Se încarcă...</div>
+}
+@else if (error) {
+  <div class="error">{{ error }}</div>
+}
+@else if (stats) {
+  <div class="dashboard-cards">
+    <div class="card">
+      <h3>Total Comenzi</h3>
+      <p>{{ stats.totalOrders }}</p>
+    </div>
+    <div class="card">
+      <h3>Comenzi în așteptare</h3>
+      <p>{{ stats.pendingOrders }}</p>
+    </div>
+    <div class="card">
+      <h3>Curse active</h3>
+      <p>{{ stats.activeTrips }}</p>
+    </div>
+    <div class="card">
+      <h3>ITP expirat în 7 zile</h3>
+      <p>{{ stats.expiringFleet }} capete tractor</p>
+    </div>
+    <div class="card">
+      <h3>Facturi neîncasate</h3>
+      <p>{{ stats.unpaidInvoices }}</p>
+    </div>
+    <div class="card">
+      <h3>Clienți activi</h3>
+      <p>{{ stats.activeClients }}</p>
+    </div>
   </div>
-
-  <div class="card">
-    <h3>Comenzi în așteptare</h3>
-    <p>14</p>
-  </div>
-
-  <!-- Curse -->
-  <div class="card">
-    <h3>Curse active</h3>
-    <p>6</p>
-  </div>
-
-  <!-- Flotă -->
-  <div class="card">
-    <h3>ITP expirat în 7 zile</h3>
-    <p>2 capete tractor</p>
-  </div>
-
-  <!-- Facturi -->
-  <div class="card">
-    <h3>Facturi neîncasate</h3>
-    <p>17</p>
-  </div>
-
-  <!-- Altele -->
-  <div class="card">
-    <h3>Clienți activi</h3>
-    <p>12</p>
-  </div>
-</div>
+}

@@ -38,8 +38,7 @@ export class AuthService {
         const otherStorage = remember ? sessionStorage : localStorage;
         otherStorage.removeItem(this.storageKey);
       }),
-      map(() => true),
-      catchError(() => of(false))
+      map(() => true)
     );
   }
 

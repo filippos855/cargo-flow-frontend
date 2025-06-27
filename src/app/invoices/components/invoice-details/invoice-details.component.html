@@ -1,6 +1,8 @@
 <h2>Detalii factură</h2>
 
-@if (invoice && !isEditing) {
+@if (loading) {
+  <p>Se încarcă...</p>
+} @else if (invoice && !isEditing) {
   <div>
     <p><strong>Număr:</strong> {{ invoice.number }}</p>
     <p><strong>Tip:</strong> {{ invoice.invoiceType.name }}</p>

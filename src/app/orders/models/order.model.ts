@@ -12,4 +12,6 @@ export interface Order {
   address: string;
   status: DictionaryItem;
   trip?: Trip;
+  tripId?: number;
+  tripNumber?: string;
 }

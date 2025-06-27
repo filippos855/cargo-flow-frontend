@@ -47,15 +47,6 @@
           </li>
         }
 
-        @if (hasRole('admin', 'financiar')) {
-          <li routerLink="/reports" routerLinkActive="active">
-            <i class="icon">📊</i>
-            @if (!collapsed) {
-              <span>Rapoarte</span>
-            }
-          </li>
-        }
-
         @if (hasRole('admin', 'operator', 'manager flota', 'financiar')) {
           <li class="has-children" (click)="toggleResources()">
             <i class="icon">🧾</i>
@@ -84,12 +75,6 @@
             <i class="icon">👤</i>
             @if (!collapsed) {
               <span>Utilizatori</span>
-            }
-          </li>
-          <li routerLink="/api-clients" routerLinkActive="active">
-            <i class="icon">🔑</i>
-            @if (!collapsed) {
-              <span>API Clients & Tokens</span>
             }
           </li>
         }

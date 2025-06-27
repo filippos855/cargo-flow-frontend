@@ -3,10 +3,6 @@
 @if (isAdding) {
   <app-order-form
     [order]="newOrder"
-    [companies]="companies"
-    [persons]="persons"
-    [statuses]="statuses"
-    [trips]="trips"
     [isEditMode]="false"
     (save)="saveNewOrder($event)"
     (cancel)="cancelNewOrder()"
@@ -35,7 +31,7 @@
     <button (click)="applyFilters()">Caută</button>
   </div>
 
-  @if (paginatedOrders.length) {
+  @if (orders.length) {
     <table>
       <thead>
         <tr>
@@ -49,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (order of paginatedOrders; track order) {
+        @for (order of orders; track order) {
           <tr>
             <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
             <td>
@@ -66,8 +62,8 @@
             <td>{{ order.status.name }}</td>
             <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
             <td>
-              @if (order.trip) {
-                <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+              @if (order.tripNumber) {
+                <a [routerLink]="['/trips', order.tripId]">{{ order.tripNumber }}</a>
               } @else {
                 — 
               }

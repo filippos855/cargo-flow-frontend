@@ -1,27 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-
+import { DashboardService, DashboardStats } from '../services/dashboard.service';
 
 @Component({
-    selector: 'app-dashboard',
-    imports: [],
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss']
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
+  standalone: true,
+  imports: []
 })
 export class DashboardComponent implements OnInit {
-  totalOrders = 0;
-  pendingOrders = 0;
-  activeTrips = 0;
-  expiringFleet = 0;
-  unpaidInvoices = 0;
-  activeClients = 0;
+  stats?: DashboardStats;
+  isLoading = true;
+  error?: string;
+
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    // TODO: Înlocuiește cu apeluri reale la servicii când sunt disponibile
-    this.totalOrders = 128;
-    this.pendingOrders = 14;
-    this.activeTrips = 6;
-    this.expiringFleet = 2;
-    this.unpaidInvoices = 17;
-    this.activeClients = 12;
+    this.dashboardService.getStats().subscribe({
+      next: (data) => {
+        this.stats = data;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.error = 'Eroare la încărcarea datelor!';
+        this.isLoading = false;
+      }
+    });
   }
 }

@@ -1,6 +1,18 @@
 <form (ngSubmit)="submitForm()" class="trip-form">
   <div class="form-group">
-    <label for="company">Firmă transport</label>
+    <label for="number">Număr cursă *</label>
+    <input
+      id="number"
+      type="text"
+      [(ngModel)]="trip.number"
+      name="number"
+      required
+      placeholder="Introdu numărul cursei"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="company">Firmă transport *</label>
     <select id="company" [(ngModel)]="trip.transportCompany" name="company" required>
       <option [ngValue]="undefined" disabled selected>Alege firma</option>
       @for (company of companies; track company) {
@@ -39,7 +51,7 @@
     <select id="trailer" [(ngModel)]="trip.trailer" name="trailer">
       <option [ngValue]="undefined" disabled selected>Alege remorca</option>
       @for (veh of vehicles; track veh) {
-        @if (veh.type.name === 'Trailer') {
+        @if (veh.type.name === "Remorca") {
           <option [ngValue]="veh">{{ veh.identifier }}</option>
         }
       }
@@ -50,7 +62,7 @@
   </div>
 
   <div class="form-group">
-    <label for="status">Status</label>
+    <label for="status">Status *</label>
     <select id="status" [(ngModel)]="trip.status" name="status" required>
       <option [ngValue]="undefined" disabled selected>Alege statusul</option>
       @for (status of statuses; track status) {
@@ -60,7 +72,7 @@
   </div>
 
   <div class="form-group">
-    <label for="startDate">Dată început</label>
+    <label for="startDate">Dată început *</label>
     <input
       id="startDate"
       type="datetime-local"

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { Trip } from '../../models/trip.model';
-import { TripService } from '../../services/trip.service';
 import { FormsModule } from '@angular/forms';
-import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { RouterModule } from '@angular/router';
+import { TripService } from '../../services/trip.service';
+import { Trip } from '../../models/trip.model';
 import { TripFormComponent } from '../trip-form/trip-form.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { Company } from '../../../companies/models/company.model';
 import { Person } from '../../../persons/models/person.model';
 import { FleetVehicle } from '../../../fleet/models/fleet-vehicle.model';
@@ -26,8 +26,7 @@ import { DictionaryItem } from '../../../shared/models/dictionary-item.model';
 })
 export class TripsComponent implements OnInit {
   trips: Trip[] = [];
-  filtered: Trip[] = [];
-
+  totalCount = 0;
   isAdding = false;
   newTrip!: Trip;
 
@@ -52,59 +51,32 @@ export class TripsComponent implements OnInit {
   constructor(private tripService: TripService) {}
 
   ngOnInit(): void {
-    this.companies = this.tripService.getMockCompanies?.() ?? [];
-    this.persons = this.tripService.getMockPersons?.() ?? [];
-    this.vehicles = this.tripService.getMockFleet?.() ?? [];
-    this.statuses = this.tripService.getMockTripStatuses?.() ?? [];
-
     this.loadTrips();
   }
 
   loadTrips(): void {
-    this.tripService.getTrips().subscribe(data => {
-      this.trips = data;
-      this.applyFilters();
+    this.tripService.getTrips(
+      this.searchTerm,
+      this.sortKey,
+      this.sortDirection,
+      this.currentPage,
+      this.pageSize,
+      this.filterStartDateFrom,
+      this.filterStartDateTo
+    ).subscribe({
+      next: (response) => {
+        this.trips = response.items;
+        this.totalCount = response.totalCount;
+      },
+      error: () => {
+        this.showToast('Eroare la încărcarea curselor.', 'error');
+      }
     });
   }
 
   applyFilters(): void {
-    const search = this.searchTerm.toLowerCase();
-    const from = this.filterStartDateFrom ? new Date(this.filterStartDateFrom) : null;
-    const to = this.filterStartDateTo ? new Date(this.filterStartDateTo) : null;
-
-    let result = this.trips.filter(t => {
-      const matchesSearch =
-        t.number.toLowerCase().includes(search) ||
-        t.transportCompany.name.toLowerCase().includes(search) ||
-        t.driver?.fullName?.toLowerCase().includes(search) ||
-        t.status.name.toLowerCase().includes(search);
-
-      const matchesFrom = !from || new Date(t.startDate) >= from;
-      const matchesTo = !to || new Date(t.startDate) <= to;
-
-      return matchesSearch && matchesFrom && matchesTo;
-    });
-
-    result = result.sort((a, b) => {
-      const aVal = this.sortKey === 'driver' ? a.driver?.fullName ?? '' : a[this.sortKey];
-      const bVal = this.sortKey === 'driver' ? b.driver?.fullName ?? '' : b[this.sortKey];
-
-      return this.sortDirection === 'asc'
-        ? (aVal < bVal ? -1 : aVal > bVal ? 1 : 0)
-        : (aVal > bVal ? -1 : aVal < bVal ? 1 : 0);
-    });
-
     this.currentPage = 1;
-    this.filtered = result;
-  }
-
-  get paginatedTrips(): Trip[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filtered.slice(start, start + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filtered.length / this.pageSize);
+    this.loadTrips();
   }
 
   setSort(key: 'number' | 'startDate' | 'driver'): void {
@@ -114,13 +86,18 @@ export class TripsComponent implements OnInit {
       this.sortKey = key;
       this.sortDirection = 'asc';
     }
-    this.applyFilters();
+    this.loadTrips();
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
   }
 
   changePage(offset: number): void {
     const nextPage = this.currentPage + offset;
     if (nextPage >= 1 && nextPage <= this.totalPages) {
       this.currentPage = nextPage;
+      this.loadTrips();
     }
   }
 
@@ -128,7 +105,7 @@ export class TripsComponent implements OnInit {
     this.isAdding = true;
     this.newTrip = {
       id: 0,
-      number: `TRIP${Math.floor(Math.random() * 1000)}`,
+      number: '',
       startDate: new Date(),
       status: {} as DictionaryItem,
       transportCompany: {} as Company,
@@ -137,20 +114,27 @@ export class TripsComponent implements OnInit {
   }
 
   saveNewTrip(trip: Trip): void {
-    this.tripService.addMockTrip(trip);
-    this.loadTrips();
-    this.isAdding = false;
-
-    this.notificationMessage = 'Cursa a fost adăugată cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.tripService.addTrip(trip).subscribe({
+      next: () => {
+        this.loadTrips();
+        this.isAdding = false;
+        this.showToast('Cursa a fost adăugată cu succes.', 'success');
+      },
+      error: () => {
+        this.showToast('Eroare la adăugare.', 'error');
+      }
+    });
   }
 
   cancelNewTrip(): void {
     this.isAdding = false;
+    this.showToast('Adăugarea cursei a fost anulată.', 'info');
+  }
 
-    this.notificationMessage = 'Adăugarea cursei a fost anulată.';
-    this.notificationType = 'info';
+  private showToast(message: string, type: 'success' | 'info' | 'error') {
+    this.notificationMessage = message;
+    this.notificationType = type;
     this.showNotification = true;
+    setTimeout(() => (this.showNotification = false), 3000);
   }
 }

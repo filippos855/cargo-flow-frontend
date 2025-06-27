@@ -4,7 +4,6 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TripService } from '../../services/trip.service';
 import { Trip } from '../../models/trip.model';
-import { Observable, switchMap } from 'rxjs';
 import { TripFormComponent } from '../trip-form/trip-form.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
@@ -12,6 +11,8 @@ import { Company } from '../../../companies/models/company.model';
 import { Person } from '../../../persons/models/person.model';
 import { FleetVehicle } from '../../../fleet/models/fleet-vehicle.model';
 import { DictionaryItem } from '../../../shared/models/dictionary-item.model';
+import { Order } from '../../../orders/models/order.model';
+import { OrderService } from '../../../orders/services/order.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -28,9 +29,7 @@ import { DictionaryItem } from '../../../shared/models/dictionary-item.model';
   styleUrls: ['./trip-details.component.scss']
 })
 export class TripDetailsComponent implements OnInit {
-  trip$!: Observable<Trip | null>;
   trip!: Trip;
-
   isEditing = false;
   showDeleteConfirm = false;
   showEditConfirm = false;
@@ -47,41 +46,51 @@ export class TripDetailsComponent implements OnInit {
   vehicles: FleetVehicle[] = [];
   statuses: DictionaryItem[] = [];
 
-  availableOrders = this.tripService.getMockAvailableOrders?.() ?? [];
-  selectedOrderForTrip: any = undefined;
+  availableOrders: Order[] = [];
+  selectedOrderForTrip: Order | undefined = undefined;
   showOrderSelector = false;
 
-  // 🔍🔢🔁 Căutare, sortare, paginare (manuală)
   searchTerm = '';
-  filtered: any[] = [];
   sortKey: 'number' | 'company' | 'createdDate' = 'createdDate';
   sortDirection: 'asc' | 'desc' = 'asc';
   currentPage = 1;
   pageSize = 10;
+  filtered: Order[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private tripService: TripService
+    private tripService: TripService,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {
-    this.companies = this.tripService.getMockCompanies?.() ?? [];
-    this.persons = this.tripService.getMockPersons?.() ?? [];
-    this.vehicles = this.tripService.getMockFleet?.() ?? [];
-    this.statuses = this.tripService.getMockTripStatuses?.() ?? [];
+    this.loadTrip();
+    this.loadAvailableOrders();
+  }
 
-    this.trip$ = this.route.paramMap.pipe(
-      switchMap(params => {
-        const id = Number(params.get('id'));
-        return this.tripService.getTripById(id);
-      })
-    );
-
-    this.trip$.subscribe(trip => {
-      if (trip) {
-        this.trip = structuredClone(trip);
+  loadTrip(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.tripService.getTripById(id).subscribe({
+      next: trip => {
+        this.trip = trip;
         this.applyFilters();
+      },
+      error: () => {
+        this.notificationMessage = 'Cursa nu a fost găsită.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
+  }
+
+  loadAvailableOrders(): void {
+    this.orderService.getOrders('', 'createdDate', 'asc', 1, 100).subscribe({
+      next: (response) => {
+        this.availableOrders = response.items.filter(o => !o.trip);
+      },
+      error: () => {
+        this.availableOrders = [];
       }
     });
   }
@@ -107,7 +116,7 @@ export class TripDetailsComponent implements OnInit {
     this.filtered = result;
   }
 
-  get paginatedOrders(): any[] {
+  get paginatedOrders(): Order[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filtered.slice(start, start + this.pageSize);
   }
@@ -130,6 +139,7 @@ export class TripDetailsComponent implements OnInit {
     const nextPage = this.currentPage + offset;
     if (nextPage >= 1 && nextPage <= this.totalPages) {
       this.currentPage = nextPage;
+      this.applyFilters();
     }
   }
 
@@ -155,7 +165,7 @@ export class TripDetailsComponent implements OnInit {
   }
 
   requestDelete(): void {
-    if (this.trip.status.name === 'Finalizat') {
+    if (this.trip.status.name === 'Finalizata') {
       this.showFinalizedDeleteConfirm = true;
     } else {
       this.showDeleteConfirm = true;
@@ -168,24 +178,43 @@ export class TripDetailsComponent implements OnInit {
   }
 
   confirmDelete(): void {
-    this.tripService.deleteTripById(this.trip.id);
-    this.notificationMessage = 'Cursa a fost ștearsă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.tripService.deleteTripById(this.trip.id).subscribe({
+      next: () => {
+        this.notificationMessage = 'Cursa a fost ștearsă.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.goBack();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la ștergere.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   save(): void {
-    this.tripService.updateTrip(this.trip);
-    this.isEditing = false;
-    this.notificationMessage = 'Cursa a fost salvată cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.tripService.updateTrip(this.trip).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.notificationMessage = 'Cursa a fost salvată cu succes.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.loadTrip();
+        this.loadAvailableOrders();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la salvare.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   cancel(): void {
     this.isEditing = false;
-    this.ngOnInit();
+    this.loadTrip();
+    this.loadAvailableOrders();
   }
 
   toggleOrderSelector(): void {
@@ -213,17 +242,23 @@ export class TripDetailsComponent implements OnInit {
   }
 
   private _includeOrderNow(): void {
-    this.trip.orders = this.trip.orders ?? [];
-    this.trip.orders.push(this.selectedOrderForTrip);
-
-    this.notificationMessage = 'Comanda a fost inclusă în cursă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-
-    this.selectedOrderForTrip = undefined;
-    this.showOrderSelector = false;
-
-    this.applyFilters();
+    if (!this.selectedOrderForTrip) return;
+    this.tripService.addOrderToTrip(this.trip.id, this.selectedOrderForTrip.id).subscribe({
+      next: () => {
+        this.notificationMessage = 'Comanda a fost inclusă în cursă.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.selectedOrderForTrip = undefined;
+        this.showOrderSelector = false;
+        this.loadTrip();
+        this.loadAvailableOrders();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la includere comandă.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   excludeOrder(orderId: number): void {
@@ -247,12 +282,19 @@ export class TripDetailsComponent implements OnInit {
   }
 
   private _excludeOrderNow(orderId: number): void {
-    this.trip.orders = this.trip.orders?.filter(o => o.id !== orderId);
-
-    this.notificationMessage = 'Comanda a fost exclusă din cursă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-
-    this.applyFilters();
+    this.tripService.removeOrderFromTrip(this.trip.id, orderId).subscribe({
+      next: () => {
+        this.notificationMessage = 'Comanda a fost exclusă din cursă.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.loadTrip();
+        this.loadAvailableOrders();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la excludere comandă.';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 }

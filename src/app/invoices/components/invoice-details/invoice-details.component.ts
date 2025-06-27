@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +23,7 @@ import { InvoiceFormComponent } from '../invoice-form/invoice-form.component';
   templateUrl: './invoice-details.component.html',
   styleUrls: ['./invoice-details.component.scss']
 })
-export class InvoiceDetailsComponent {
+export class InvoiceDetailsComponent implements OnInit {
   invoice!: Invoice;
   isEditing = false;
 
@@ -33,16 +33,32 @@ export class InvoiceDetailsComponent {
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
 
+  loading = true;
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
     private invoiceService: InvoiceService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.loadInvoice();
+  }
+
+  loadInvoice(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.invoiceService.getInvoiceById(id);
-    if (found) {
-      this.invoice = structuredClone(found);
-    }
+    this.invoiceService.getInvoiceById(id).subscribe({
+      next: (data) => {
+        this.invoice = { ...data };
+        this.loading = false;
+      },
+      error: () => {
+        this.notificationMessage = 'Factura nu a putut fi încărcată!';
+        this.notificationType = 'error';
+        this.showNotification = true;
+        this.loading = false;
+      }
+    });
   }
 
   enableEdit(): void {
@@ -63,27 +79,40 @@ export class InvoiceDetailsComponent {
   }
 
   save(): void {
-    this.invoiceService.updateInvoice(this.invoice);
-    this.isEditing = false;
-    this.notificationMessage = 'Factura a fost salvată cu succes.';
-    this.notificationType = 'success';
-    this.showNotification = true;
+    this.invoiceService.updateInvoice(this.invoice).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.notificationMessage = 'Factura a fost salvată cu succes.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        this.loadInvoice();
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la salvarea facturii!';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   requestDelete(): void {
-    if (this.invoice.status.name === 'Achitată') {
-      this.showDeleteConfirm = true;
-    } else {
-      this.confirmDelete();
-    }
+    this.showDeleteConfirm = true;
   }
 
   confirmDelete(): void {
-    this.invoiceService.deleteInvoiceById(this.invoice.id);
-    this.notificationMessage = 'Factura a fost ștearsă.';
-    this.notificationType = 'success';
-    this.showNotification = true;
-    this.goBack();
+    this.invoiceService.deleteInvoiceById(this.invoice.id).subscribe({
+      next: () => {
+        this.notificationMessage = 'Factura a fost ștearsă.';
+        this.notificationType = 'success';
+        this.showNotification = true;
+        setTimeout(() => this.goBack(), 800);
+      },
+      error: () => {
+        this.notificationMessage = 'Eroare la ștergerea facturii!';
+        this.notificationType = 'error';
+        this.showNotification = true;
+      }
+    });
   }
 
   cancelDelete(): void {
@@ -91,11 +120,8 @@ export class InvoiceDetailsComponent {
   }
 
   cancelEdit(): void {
-    const original = this.invoiceService.getInvoiceById(this.invoice.id);
-    if (original) {
-      this.invoice = structuredClone(original);
-    }
     this.isEditing = false;
+    this.loadInvoice();
   }
 
   goBack(): void {

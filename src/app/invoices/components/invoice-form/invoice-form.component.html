@@ -1,4 +1,4 @@
-<form (ngSubmit)="submitForm()" class="invoice-form">
+<form (ngSubmit)="submitForm()" class="invoice-form" *ngIf="!loading">
   <div class="form-group">
     <label for="number">Număr factură</label>
     <input id="number" type="text" [(ngModel)]="invoice.number" name="number" required />
@@ -9,7 +9,7 @@
     <select id="company" [(ngModel)]="invoice.company" name="company" required>
       <option [ngValue]="undefined" disabled selected>Selectează firma</option>
       @for (c of companies; track c) {
-        <option [ngValue]="c">{{ c.name }}</option>
+        <option [ngValue]="c">{{ c?.name || '' }}</option>
       }
     </select>
   </div>
@@ -19,7 +19,7 @@
     <select id="invoiceType" [(ngModel)]="invoice.invoiceType" name="invoiceType" required>
       <option [ngValue]="undefined" disabled selected>Selectează tipul</option>
       @for (t of invoiceTypes; track t) {
-        <option [ngValue]="t">{{ t.name }}</option>
+        <option [ngValue]="t">{{ t?.name || '' }}</option>
       }
     </select>
   </div>
@@ -29,7 +29,7 @@
     <select id="status" [(ngModel)]="invoice.status" name="status" required>
       <option [ngValue]="undefined" disabled selected>Selectează statusul</option>
       @for (s of statuses; track s) {
-        <option [ngValue]="s">{{ s.name }}</option>
+        <option [ngValue]="s">{{ s?.name || '' }}</option>
       }
     </select>
   </div>
@@ -59,7 +59,7 @@
     <select id="order" [(ngModel)]="invoice.order" name="order" [disabled]="!!invoice.trip">
       <option [ngValue]="undefined">—</option>
       @for (o of orders; track o) {
-        <option [ngValue]="o">{{ o.number }}</option>
+        <option [ngValue]="o">{{ o?.number || '' }}</option>
       }
     </select>
   </div>
@@ -69,7 +69,7 @@
     <select id="trip" [(ngModel)]="invoice.trip" name="trip" [disabled]="!!invoice.order">
       <option [ngValue]="undefined">—</option>
       @for (t of trips; track t) {
-        <option [ngValue]="t">{{ t.number }}</option>
+        <option [ngValue]="t">{{ t?.number || '' }}</option>
       }
     </select>
   </div>
@@ -79,6 +79,10 @@
     <button type="button" class="cancel-btn" (click)="cancelForm()">Anulează</button>
   </div>
 </form>
+
+@if (loading) {
+  <div class="loader">Se încarcă datele...</div>
+}
 
 @if (showNotification) {
   <app-notification

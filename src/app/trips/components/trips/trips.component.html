@@ -3,10 +3,6 @@
 @if (isAdding) {
   <app-trip-form
     [trip]="newTrip"
-    [companies]="companies"
-    [persons]="persons"
-    [vehicles]="vehicles"
-    [statuses]="statuses"
     [isEditMode]="false"
     (save)="saveNewTrip($event)"
     (cancel)="cancelNewTrip()"
@@ -35,7 +31,7 @@
     <button (click)="applyFilters()">Caută</button>
   </div>
 
-  @if (paginatedTrips.length) {
+  @if (trips.length) {
     <table>
       <thead>
         <tr>
@@ -47,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (trip of paginatedTrips; track trip) {
+        @for (trip of trips; track trip) {
           <tr>
             <td><a [routerLink]="['/trips', trip.id]">{{ trip.number }}</a></td>
             <td>

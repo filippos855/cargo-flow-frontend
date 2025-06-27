@@ -19,10 +19,10 @@
     <p><strong>Status:</strong> {{ order.status.name }}</p>
     <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
 
-    @if (order.trip) {
+    @if (order.tripNumber) {
       <p class="trip-number">
         <strong>Cursă asociată:</strong>
-        <a [routerLink]="['/trips', order.trip.id]">{{ order.trip.number }}</a>
+        <a [routerLink]="['/trips', order.tripId]">{{ order.tripNumber }}</a>
       </p>
       <button (click)="requestRemoveFromTrip()">Scoate din cursă</button>
     } @else {
@@ -53,10 +53,6 @@
 @if (order && isEditing) {
   <app-order-form
     [order]="order"
-    [companies]="companies"
-    [persons]="persons"
-    [statuses]="statuses"
-    [trips]="trips"
     [isEditMode]="true"
     (save)="save()"
     (cancel)="cancel()"
