@@ -60,7 +60,7 @@
             </td>
             <td>{{ order.address }}</td>
             <td>{{ order.status.name }}</td>
-            <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ order.createdDate | date: 'dd/MM/yyyy' }}</td>
             <td>
               @if (order.tripNumber) {
                 <a [routerLink]="['/trips', order.tripId]">{{ order.tripNumber }}</a>

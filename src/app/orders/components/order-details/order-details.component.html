@@ -17,7 +17,7 @@
     </p>
     <p><strong>Adresă livrare:</strong> {{ order.address }}</p>
     <p><strong>Status:</strong> {{ order.status.name }}</p>
-    <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+    <p><strong>Dată creare:</strong> {{ order.createdDate | date: 'dd/MM/yyyy' }}</p>
 
     @if (order.tripNumber) {
       <p class="trip-number">
