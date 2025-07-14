@@ -95,9 +95,8 @@
             <tr>
               <td><a [routerLink]="['/orders', order.id]">{{ order.number }}</a></td>
               <td>
-                <a [routerLink]="['/resources/companies', order.company.id]">
-                  {{ order.company.name }}
-                </a>
+                <a *ngIf="order.company" [routerLink]="['/resources/companies', order.company.id]">{{ order.company.name }}</a>
+                <span *ngIf="!order.company">-</span>
               </td>
               <td>{{ order.createdDate | date: 'dd/MM/yyyy HH:mm' }}</td>
               <td><button (click)="excludeOrder(order.id)">Scoate</button></td>
